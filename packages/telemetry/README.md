@@ -1,16 +1,16 @@
 # @earendil-works/3pi-telemetry
 
-Vendor-neutral telemetry contracts and typed schema utilities for pi packages.
+Contratos de telemetria neutros em relação ao fornecedor (vendor-neutral) e utilitários de schema tipados para os pacotes pi.
 
-This package provides:
+Este pacote fornece:
 
-- an explicit, callback-based `TelemetryContext` / `TelemetrySpan` contract;
-- a shared `NOOP_TELEMETRY_CONTEXT`;
-- a reference `InMemoryTelemetryContext` implementation;
-- serializable schema definitions with inferred TypeScript types;
-- no exporter, global current-span state, or dependency on a telemetry backend.
+- um contrato explícito baseado em callback para `TelemetryContext` / `TelemetrySpan`;
+- um `NOOP_TELEMETRY_CONTEXT` compartilhado;
+- uma implementação de referência `InMemoryTelemetryContext`;
+- definições de schema serializáveis com tipos inferidos de TypeScript;
+- nenhum exporter, estado global de span atual, ou dependência de um backend de telemetria.
 
-Applications can use the in-memory reference or provide an adapter for OpenTelemetry, Sentry, logs, or another backend. Pi packages pass telemetry contexts explicitly and define their domain schemas separately.
+As aplicações podem usar a referência in-memory ou fornecer um adapter para OpenTelemetry, Sentry, logs ou outro backend. Os pacotes Pi passam contextos de telemetria explicitamente e definem seus schemas de domínio separadamente.
 
 ## Table of Contents
 
@@ -38,32 +38,32 @@ npm install @earendil-works/3pi-telemetry
 
 ## Telemetry Concepts
 
-Telemetry describes what a program did while it was running. This package models that work using spans, attributes, events, statuses, and explicit context:
+Telemetria descreve o que um programa fez enquanto estava em execução. Este pacote modela esse trabalho usando spans, atributos (attributes), eventos (events), status e contexto (context) explícito:
 
 | Concept | Plain-language meaning |
 |---|---|
-| **Span** | A timed record of one operation, such as loading an account or making an AI request. It begins before the work and ends when the work finishes. |
-| **Parent and child spans** | Operations can contain smaller operations. A request span might contain a cache lookup and a database query. Together they form a tree showing where time was spent. |
-| **Attribute** | A named fact attached to a span, such as `provider: "openai"`, `cache.hit: true`, or `item_count: 12`. Attributes describe the operation and its result. |
-| **Event** | A named occurrence at a point during a span, such as `retry.scheduled` or `cache.lookup`. Events have no duration and may carry their own attributes. |
-| **Status** | The operation's outcome: `ok` or `error`. An error status may include an error name and message. |
-| **Context** | A handle identifying where new work belongs in the span tree. Starting a span from a context makes it a child of that context. |
+| **Span** | Um registro com duração (timed record) de uma operação, como carregar uma conta ou fazer uma solicitação de IA. Ele começa antes do trabalho e termina quando o trabalho é concluído. |
+| **Parent and child spans** | Operações podem conter operações menores. Um span de solicitação pode conter uma busca no cache e uma consulta no banco de dados. Juntos, eles formam uma árvore (span tree) mostrando onde o tempo foi gasto. |
+| **Attribute** | Um fato nomeado anexado a um span, como `provider: "openai"`, `cache.hit: true` ou `item_count: 12`. Atributos descrevem a operação e seu resultado. |
+| **Event** | Uma ocorrência nomeada em um momento durante um span, como `retry.scheduled` ou `cache.lookup`. Eventos não têm duração e podem conter seus próprios atributos. |
+| **Status** | O resultado da operação: `ok` ou `error`. Um status de erro pode incluir um nome e uma mensagem de erro. |
+| **Context** | Um handle (identificador) apontando a que local um novo trabalho pertence na árvore de spans. Iniciar um span a partir de um contexto o torna filho desse contexto. |
 
-For example, loading an account could produce this telemetry:
+Por exemplo, carregar uma conta poderia produzir esta telemetria:
 
 ```text
 example.account.load                         span
-├─ attributes: account.id=123, found=true   facts about the span
-├─ event: example.cache.lookup              occurrence during the span
-│  └─ attribute: cache.hit=false            fact about the event
-└─ status: ok                               final outcome
+├─ attributes: account.id=123, found=true   fatos sobre o span
+├─ event: example.cache.lookup              ocorrência durante o span
+│  └─ attribute: cache.hit=false            fato sobre o evento
+└─ status: ok                               resultado final
 ```
 
-A span is diagnostic data, not business state. Recording it must not change whether the account load runs, succeeds, fails, or is persisted. An adapter translates these generic concepts into the corresponding concepts used by OpenTelemetry, Sentry, logs, or another backend.
+Um span é um dado de diagnóstico, não estado de negócios. Registrá-lo não deve alterar se o carregamento da conta roda, obtém sucesso, falha ou é persistido. Um adapter traduz esses conceitos genéricos nos conceitos correspondentes usados ​​pelo OpenTelemetry, Sentry, logs ou outro backend.
 
 ## Core Context API
 
-A `TelemetryContext` starts a span around a callback. The callback receives a `TelemetrySpan`, which is also the explicit parent context for child spans.
+Um `TelemetryContext` inicia um span envolvendo um callback. O callback recebe um `TelemetrySpan`, que também é o contexto pai explícito para spans filhos (child spans).
 
 ```typescript
 import {
@@ -89,7 +89,7 @@ async function loadAccount(
 }
 ```
 
-Pass the callback span to lower-level work to create explicit nesting:
+Passe o span de callback para um trabalho de nível inferior para criar aninhamento explícito:
 
 ```typescript
 return telemetryContext.startSpan({ name: 'example.parent' }, async (parentSpan) => {
@@ -100,7 +100,7 @@ return telemetryContext.startSpan({ name: 'example.parent' }, async (parentSpan)
 });
 ```
 
-There is no public `end()` method. `startSpan()` owns settlement and keeps the span open until the callback's value or promise settles. For an expected failure represented by a normal return value, set the status explicitly:
+Não há um método público `end()`. O `startSpan()` detém a conclusão (settlement) e mantém o span aberto até que o valor ou a promise do callback sejam resolvidos. Para uma falha esperada representada por um valor de retorno normal, defina o status explicitamente:
 
 ```typescript
 return telemetryContext.startSpan({ name: 'example.save' }, async (span) => {
@@ -117,23 +117,23 @@ return telemetryContext.startSpan({ name: 'example.save' }, async (span) => {
 
 ## Adapter Contract
 
-An adapter implements `TelemetryContext` and bridges the generic API to its backend. It must:
+Um adapter implementa `TelemetryContext` e faz a ponte entre a API genérica e seu backend. Ele deve:
 
-- create a child span and invoke the callback synchronously, exactly once;
-- preserve the callback's returned value and rejection value, returning a promise rejected with the same value after a synchronous throw;
-- keep the native span open until a returned promise settles;
-- treat normal completion as `ok` and throws/rejections as errors unless an explicit status was set;
-- make repeated `setStatus()` calls last-write-wins;
-- merge `setAttributes()` calls, with later defined values replacing earlier values and `undefined` ignored;
-- make recording methods synchronous, passive, and non-throwing;
-- ignore calls made after settlement;
-- ignore a failed recording call atomically, suppress backend failures, and still execute the business callback exactly once.
+- criar um child span e invocar o callback de forma síncrona, exatamente uma vez;
+- preservar o valor retornado do callback e o valor de rejeição, retornando uma promise rejeitada com o mesmo valor após um throw síncrono;
+- manter o span nativo aberto até que uma promise retornada seja resolvida (settles);
+- tratar a conclusão normal como `ok` e throws/rejections como erros a menos que um status explícito tenha sido definido;
+- fazer com que chamadas repetidas a `setStatus()` sigam o modelo "última gravação vence" (last-write-wins);
+- fazer o merge de chamadas a `setAttributes()`, onde valores definidos mais tarde substituem os mais antigos e `undefined` é ignorado;
+- tornar os métodos de gravação síncronos, passivos e sem throw (non-throwing);
+- ignorar chamadas feitas após o settlement (conclusão);
+- ignorar uma falha na chamada de gravação de forma atômica, suprimir falhas de backend e ainda executar o callback de negócios exatamente uma vez.
 
-Adapters may activate backend-native ambient context internally for automatic instrumentation, but pi code always propagates the parent through `TelemetryContext` arguments. Exporter buffering, flushing, sampling, backend IDs, and backend-specific context objects belong to the adapter. Use the [adapter conformance suite](#adapter-conformance) to check these observable semantics.
+Os adapters podem ativar um contexto ambiente (ambient context) nativo do backend internamente para instrumentação automática, mas o código pi sempre propaga o pai por meio de argumentos `TelemetryContext`. Buffering do exporter, flush, sampling, IDs do backend e objetos de contexto específicos do backend pertencem ao adapter. Use a [suíte de conformidade de adapter](#adapter-conformance) para verificar essas semânticas observáveis.
 
 ## No-op Context
 
-Use `NOOP_TELEMETRY_CONTEXT` when telemetry is optional:
+Use `NOOP_TELEMETRY_CONTEXT` quando a telemetria for opcional:
 
 ```typescript
 import { NOOP_TELEMETRY_CONTEXT } from '@earendil-works/3pi-telemetry';
@@ -144,16 +144,16 @@ const result = await NOOP_TELEMETRY_CONTEXT.startSpan(
 );
 ```
 
-The no-op context:
+O no-op context:
 
-- invokes callbacks synchronously;
-- preserves returned values and asynchronous rejections, and converts a synchronous throw to a promise rejected with the same value;
-- uses one shared frozen inert span, including for nested spans;
-- does not inspect or retain names, attributes, events, or statuses.
+- invoca callbacks de forma síncrona;
+- preserva valores retornados e rejections assíncronas, e converte um throw síncrono em uma promise rejeitada com o mesmo valor;
+- usa um span inerte, congelado e compartilhado, inclusive para spans aninhados;
+- não inspeciona ou retém nomes, atributos, eventos ou status.
 
 ## In-Memory Reference Adapter
 
-`InMemoryTelemetryContext` is the backend-neutral reference implementation. It is useful for tests, local diagnostics, and applications that intentionally want process-local capture without an exporter:
+O `InMemoryTelemetryContext` é a implementação de referência neutra quanto a backend. Ele é útil para testes, diagnósticos locais e aplicações que intencionalmente desejam captura process-local sem um exporter:
 
 ```typescript
 import { InMemoryTelemetryContext } from '@earendil-works/3pi-telemetry';
@@ -171,13 +171,13 @@ await telemetry.startSpan(
 console.log(telemetry.getSpans());
 ```
 
-`getSpans()` returns detached snapshots in span-start order. Each `RecordedTelemetrySpan` contains a deterministic numeric ID, parent ID, merged attributes, ordered events, final status, settlement state, and deterministic end sequence. It records no timestamps.
+`getSpans()` retorna snapshots separados na ordem de início do span. Cada `RecordedTelemetrySpan` contém um ID numérico determinístico, ID do pai, atributos merged, eventos ordenados, status final, estado de settlement, e sequência de fim determinística. Ele não registra timestamps.
 
-The adapter is safe to use as an ordinary `TelemetryContext`, but storage is unbounded and process-local. Create a fresh instance to isolate tests or recording scopes, and do not capture sensitive attributes unless the caller's data policy allows them.
+O adapter é seguro para uso como um `TelemetryContext` comum, mas o armazenamento é ilimitado e process-local. Crie uma nova instância para isolar testes ou escopos de gravação e não capture atributos sensíveis a não ser que a data policy do chamador os permita.
 
 ## Adapter Conformance
 
-`@earendil-works/3pi-telemetry/testing` exports a runner-independent conformance suite modeled as grouped cases. A fixture supplies a fresh context and converts its backend's finished spans into normalized `RecordedTelemetrySpan` snapshots:
+`@earendil-works/3pi-telemetry/testing` exporta uma suíte de conformidade independente de runner, modelada como casos agrupados. Um fixture fornece um novo contexto e converte os spans finalizados de seu backend em snapshots `RecordedTelemetrySpan` normalizados:
 
 ```typescript
 import {
@@ -206,11 +206,11 @@ for (const group of new Set(conformance.map((testCase) => testCase.group))) {
 }
 ```
 
-The suite checks synchronous single admission, result and rejection identity, automatic and explicit status, attribute merging, event ordering, inert post-settlement calls, nested and concurrent parentage, and suppression of unreadable telemetry payload failures. `getSpans()` may flush an asynchronous exporter before returning. The testing subpath uses Node's assertion APIs; the root telemetry package remains runtime-neutral.
+A suíte verifica admissão síncrona única, identidade de resultado e rejeição, status automático e explícito, merge de atributos, ordenação de eventos, chamadas pós-settlement inertes, parentesco (parentage) aninhado e concorrente e supressão de falhas de payload de telemetria ilegível. `getSpans()` pode fazer um flush de um exporter assíncrono antes de retornar. O subpath testing usa as APIs de asserção do Node; o pacote raiz de telemetria permanece neutro em termos de runtime.
 
 ## Typed Schemas
 
-The low-level span API intentionally accepts open names and attribute bags so adapters remain generic. Domain packages can define closed, serializable schemas and infer exact TypeScript types from them.
+A API de span de baixo nível intencionalmente aceita nomes abertos e sacos de atributos (attribute bags) para que os adapters permaneçam genéricos. Pacotes de domínio podem definir schemas fechados e serializáveis e inferir tipos exatos em TypeScript a partir deles.
 
 ```typescript
 import {
@@ -264,7 +264,7 @@ const startSpan = createTypedSpanStarter(
 );
 ```
 
-The starter exposes one overload per span and checks names and attributes at compile time. Union-valued names must be narrowed before a call, preserving the relationship between each runtime name and its attribute schema. Its callback receives a child starter over the same schemas, already bound to the callback span:
+O starter expõe uma sobrecarga (overload) por span e verifica nomes e atributos no momento da compilação. Nomes com valores de union devem ser estritamente tipados antes de uma chamada, preservando o relacionamento entre cada nome de runtime e seu schema de atributo. Seu callback recebe um starter filho sobre os mesmos schemas, já vinculado ao span do callback:
 
 ```typescript
 await startSpan(
@@ -291,14 +291,14 @@ await startSpan(
 
 ### Start and Completion Attributes
 
-`startAttributes` and `endAttributes` describe when an attribute is normally known, not separate runtime storage:
+`startAttributes` e `endAttributes` descrevem quando um atributo é normalmente conhecido, e não armazenamento de runtime separado:
 
 | Schema field | How values are recorded | Requiredness |
 |---|---|---|
-| `startAttributes` | Passed in the typed starter's `attributes` argument when the span is created | Each definition explicitly sets `required: true` or `false` |
-| `endAttributes` | Added later through the schema-scoped span's `setAttributes()` method | Always optional |
+| `startAttributes` | Passado no argumento `attributes` do typed starter quando o span é criado | Cada definição define explicitamente `required: true` ou `false` |
+| `endAttributes` | Adicionado posteriormente através do método `setAttributes()` do span de escopo do schema | Sempre opcional |
 
-Both sets become ordinary attributes on the same backend span. There is no separate end-attribute payload or end callback. In the preceding example, `example.resource` is known when `example.read` starts, while `example.item_count` is known only after `readAccounts()` returns:
+Ambos os conjuntos se tornam atributos comuns no mesmo backend span. Não há um payload separado para end-attribute ou end callback. No exemplo anterior, `example.resource` é conhecido quando `example.read` começa, enquanto `example.item_count` é conhecido apenas depois que `readAccounts()` retorna:
 
 ```typescript
 await startSpan(
@@ -314,13 +314,13 @@ await startSpan(
 ); // resolving the callback settles the span
 ```
 
-“End” means completion enrichment: an end attribute may be set at any point while the callback is active, and it may be omitted when unavailable. Calling `setAttributes()` zero times is valid. This matters for early failures, cancellation, and provider-specific data that may not exist on every path.
+"End" (Fim) significa enriquecimento de conclusão: um end attribute (atributo final) pode ser definido em qualquer ponto enquanto o callback estiver ativo e pode ser omitido quando não estiver disponível. Chamar `setAttributes()` zero vezes é válido. Isso é importante para falhas antecipadas, cancelamento e dados específicos do provedor que podem não existir em todos os caminhos.
 
-Repeated `setAttributes()` calls merge into the same attribute bag. A later defined value replaces an earlier value for the same key, while `undefined` is ignored. The schema-scoped method accepts only the current span's declared end attributes.
+Chamadas repetidas a `setAttributes()` mesclam (merge) no mesmo attribute bag (saco de atributos). Um valor definido mais tarde substitui um valor anterior pela mesma chave, enquanto `undefined` é ignorado. O método com escopo do schema aceita apenas os atributos finais declarados do span atual.
 
-Attributes do not end the span. Returning, resolving, throwing, or rejecting from the callback controls settlement; `startSpan()` performs the actual end operation. Adapter calls made after settlement are inert.
+Os atributos não encerram o span. Retornar, resolver, lançar exceção (throw) ou rejeitar a partir do callback controla a conclusão (settlement); `startSpan()` realiza a operação final efetiva. As chamadas do adapter feitas após o settlement ficam inertes.
 
-A starter can compose multiple independently versioned schemas:
+Um starter pode compor vários schemas versionados independentemente:
 
 ```typescript
 import { AGENT_TELEMETRY_SCHEMAS } from '@earendil-works/3pi-agent-core';
@@ -331,44 +331,44 @@ const startAgentSpan = createTypedSpanStarter(
 );
 ```
 
-Inline schema arrays retain their tuple types automatically. Separately declared arrays should use `as const`. Literal duplicate span names across the array are rejected at compile time; schemas are not merged, inspected, or retained at runtime.
+Os arrays de schema inline mantêm seus tipos de tupla automaticamente. Os arrays declarados separadamente devem usar `as const`. Nomes de span duplicados literais no array são rejeitados em tempo de compilação; os schemas não sofrem merge, não são inspecionados ou retidos em tempo de execução.
 
-Schema-derived types reject missing required attributes, unknown keys, invalid closed-set values, undeclared events, and attributes on empty schemas. End attributes are always optional enrichment; the type system does not require `setAttributes()` to be called.
+Tipos derivados de schemas rejeitam atributos requeridos ausentes, chaves desconhecidas, valores de conjuntos fechados inválidos, eventos não declarados e atributos em schemas vazios. Os end attributes são sempre um enriquecimento opcional; o sistema de tipagem não requer que `setAttributes()` seja chamado.
 
-`defineTelemetrySchema()` is a typed identity function. It returns ordinary JSON-serializable data and performs no runtime validation or parent-rule enforcement.
+`defineTelemetrySchema()` é uma typed identity function. Ela retorna dados JSON serializáveis comuns e não executa validação em runtime ou imposição da regra de parentesco (parent-rule).
 
 ## Schema Metadata
 
-Supported attribute types are:
+Os tipos de atributo (attribute types) suportados são:
 
-- `string`, `number`, and `boolean`;
-- `string[]`, `number[]`, and `boolean[]`.
+- `string`, `number` e `boolean`;
+- `string[]`, `number[]` e `boolean[]`.
 
-Attribute definitions support:
+As definições de atributo suportam:
 
-- `values`: a closed set for scalar values;
-- `elementValues`: a closed set for array elements;
-- `examples`: documentation examples;
-- `sensitive`: marks data requiring special handling;
-- `cardinality`: records expected `low` or `high` cardinality.
+- `values`: um conjunto fechado (closed set) para valores escalares;
+- `elementValues`: um conjunto fechado para elementos de array;
+- `examples`: exemplos de documentação;
+- `sensitive`: marca dados que requerem tratamento especial;
+- `cardinality`: registra a cardinalidade esperada `low` ou `high`.
 
-Start and event attributes declare `required`. End attributes do not; see [Start and Completion Attributes](#start-and-completion-attributes).
+Os atributos start e event declaram `required`. Os atributos end não; veja [Start and Completion Attributes](#start-and-completion-attributes).
 
-Parent metadata is descriptive schema data:
+Parent metadata são dados de schema descritivos:
 
-- `{ kind: 'any' }`: root or any caller span;
-- `{ kind: 'root_or_external' }`: root or a caller-owned span outside the schema;
-- `{ kind: 'spans', spans: [...] }`: only the listed schema spans.
+- `{ kind: 'any' }`: root (raiz) ou qualquer caller span;
+- `{ kind: 'root_or_external' }`: root ou um span caller fora do schema;
+- `{ kind: 'spans', spans: [...] }`: apenas os spans do schema listados.
 
-Adapters do not need to understand schema objects. Instrumentation helpers and tests use them to keep emitted names and attributes consistent.
+Os adapters não precisam entender os objetos de schema. Ajuda e testes de instrumentação (instrumentation helpers) os utilizam para manter consistentes os nomes e atributos emitidos.
 
 ## Pi Package Integration
 
-Package ownership is intentionally split:
+A propriedade dos pacotes é intencionalmente dividida:
 
-- `@earendil-works/3pi-telemetry` owns the vendor-neutral contract, no-op and in-memory reference contexts, schema utilities, and adapter conformance suite;
-- `@earendil-works/3pi-ai` accepts and propagates `telemetryContext` in provider request options but owns no telemetry schema;
-- `@earendil-works/3pi-agent-core` owns and exports the pi AI-request and harness schemas, their combined readonly schema tuple, and typed span helpers.
+- `@earendil-works/3pi-telemetry` detém o contrato independente de vendor, os no-op e contextos de referência in-memory, os utilitários de schema e a suíte de conformidade de adapter;
+- `@earendil-works/3pi-ai` aceita e propaga o `telemetryContext` nas opções de solicitação do provedor, mas não detém nenhum telemetry schema;
+- `@earendil-works/3pi-agent-core` possui e exporta os schemas de requisições AI pi e do harness, a sua tuple readonly combinada e utilitários tipados de span (typed span helpers).
 
 ```typescript
 import {
@@ -380,15 +380,15 @@ import {
 } from '@earendil-works/3pi-agent-core';
 ```
 
-The pi schemas use pi-owned `pi.ai.*`, `pi.harness.*`, and `pi.session.*` names. Adapters may translate them to backend conventions without changing the emitted pi vocabulary.
+Os schemas pi usam os nomes `pi.ai.*`, `pi.harness.*` e `pi.session.*` controlados pelo pi. Adapters podem traduzi-los para convenções do backend sem alterar o vocabulário pi emitido.
 
 ## Security and Portability
 
-Telemetry is process-local diagnostics, not durable application state. Do not persist a `TelemetryContext`, `TelemetrySpan`, or backend-native trace object in records, messages, snapshots, or deferred handles.
+Telemetria é o diagnóstico restrito ao processo local (process-local), e não a durabilidade do estado da aplicação. Não persista um `TelemetryContext`, `TelemetrySpan`, ou objeto nativo de rastreio de um backend (backend-native trace object) em registros, mensagens, snapshots ou handles adiados.
 
-Attribute values are intentionally limited to primitive scalars and arrays. Domain instrumentation should avoid prompts, completions, tool arguments or output, file contents, provider payloads, headers, credentials, and free-form error details unless its schema and data policy explicitly allow them.
+Os valores de atributos são limitados intencionalmente a escalares primitivos e arrays. Instrumentação de domínio (Domain instrumentation) deve evitar lidar com os prompts, outputs ou argumentos de ferramenta (tool arguments), contéudos de arquivos, ou credenciais/payloads/cabeçalhos atrelados a um provider ou provedor, tão pouco os detalhes formatados livremente que resultem de algum erro a não ser se o seu schema e o controle normativo atrelado aos dados explicitamente lhes der validação e espaço condizente a uso.
 
-The package does not use `AsyncLocalStorage` or another runtime-specific ambient context API. It is suitable for Node.js, Bun, browsers, and workers; backend adapters remain responsible for their own runtime compatibility.
+O pacote não usa a `AsyncLocalStorage` tão pouco demais meios restritos vinculados a ambiente (ambient context API) originários da API ao ambiente de execução (runtime). Trata-se então ser favoravelmente passivo com os navegadores, bem como Node.js, Bun ou workers; devendo seus adapters ficarem condicionados ao respaldo originário e autoral referente à compatibilidade para as instâncias ativas do seu backend pertinente ao serviço de destino (backend adapters).
 
 ## API Reference
 
@@ -396,64 +396,64 @@ The package does not use `AsyncLocalStorage` or another runtime-specific ambient
 
 | Export | Purpose |
 |---|---|
-| `TelemetryContext` | Starts callback-managed child spans |
-| `TelemetrySpan` | Records attributes, events, and status; also acts as a child context |
-| `SpanOptions` | Span name and optional start attributes |
-| `SpanAttributes` / `AttributeValue` | Open adapter-level attribute bag and supported values |
-| `SpanStatus` | Explicit `ok` or `error` status |
-| `NOOP_TELEMETRY_CONTEXT` | Shared passive context for disabled telemetry |
-| `InMemoryTelemetryContext` | Reference adapter with deterministic process-local recording |
-| `RecordedTelemetrySpan` | Normalized captured span snapshot |
-| `RecordedTelemetryEvent` | Normalized captured event snapshot |
+| `TelemetryContext` | Inicia child spans gerenciados por callback |
+| `TelemetrySpan` | Registra atributos, eventos e status; também atua como um child context |
+| `SpanOptions` | Nome do span e start attributes opcionais |
+| `SpanAttributes` / `AttributeValue` | Bag (saco) de atributos abertos no nível do adapter e valores suportados |
+| `SpanStatus` | Status explícito `ok` ou `error` |
+| `NOOP_TELEMETRY_CONTEXT` | Contexto passivo compartilhado para telemetria desativada |
+| `InMemoryTelemetryContext` | Adapter de referência com gravação process-local determinística |
+| `RecordedTelemetrySpan` | Snapshot normalizado de span capturado |
+| `RecordedTelemetryEvent` | Snapshot normalizado de evento capturado |
 
 ### Schema definitions and inference
 
 | Export | Purpose |
 |---|---|
-| `defineTelemetrySchema()` | Typed identity helper for serializable schema data |
-| `createTypedSpanStarter()` | Binds a parent context to one or more schema vocabularies |
-| `TypedSpanStarter` | Exact starter type with recursively child-bound callbacks |
-| `TelemetrySchemaDefinition` | Top-level schema shape |
-| `TelemetrySpanDefinition` | Span metadata, parents, attributes, events, and status rule |
-| `TelemetryAttributeType` | Supported scalar and array type names |
-| `TelemetryAttributeMetadata` | Description, sensitivity, and cardinality metadata |
-| `TelemetryAttributeDefinition` | Attribute type, allowed values, examples, and metadata |
-| `TelemetryStartAttributeDefinition` | Start attribute definition with requiredness |
-| `TelemetryEventAttributeDefinition` | Event attribute definition with requiredness |
-| `TelemetryEventDefinition` | Event description and attribute definitions |
-| `TelemetryParentDefinition` | Open, external-root, or finite schema-parent rule |
-| `TelemetrySchemaSpanName` | Union of declared span names |
-| `TelemetrySchemaSpanStartAttributes` | Exact inferred start attributes for one span |
-| `TelemetrySchemaSpanEndAttributes` | Optional inferred end attributes for one span |
-| `TelemetrySchemaSpanEventName` | Union of events declared by one span |
-| `TelemetrySchemaSpanEventAttributes` | Exact inferred attributes for one event |
-| `SchemaTelemetrySpan` | Span view restricted to one schema span |
-| `TelemetrySchemaSpanUnion` | Discriminated union of all spans in a schema |
-| `InferStartAttributes` | Required and optional values inferred from start definitions |
-| `InferOptionalAttributes` | Optional values inferred from end definitions |
-| `InferEventAttributes` | Required and optional values inferred from event definitions |
-| `InferRequiredAndOptionalAttributes` | Shared inference utility for definitions with requiredness |
-| `ExactTelemetryAttributes` | Rejects keys outside an expected attribute set |
+| `defineTelemetrySchema()` | Helper de identidade tipada para dados de schema serializáveis |
+| `createTypedSpanStarter()` | Vincula um parent context a um ou mais vocabulários de schema |
+| `TypedSpanStarter` | Tipo de starter exato com callbacks filhos vinculados recursivamente |
+| `TelemetrySchemaDefinition` | Estrutura top-level do schema |
+| `TelemetrySpanDefinition` | Metadados do span, parents, atributos, eventos e regra de status |
+| `TelemetryAttributeType` | Nomes de tipos escalares e array suportados |
+| `TelemetryAttributeMetadata` | Metadados de descrição, sensibilidade e cardinalidade |
+| `TelemetryAttributeDefinition` | Tipo de atributo, valores permitidos, exemplos e metadados |
+| `TelemetryStartAttributeDefinition` | Definição de atributo de início (start) com obrigatoriedade |
+| `TelemetryEventAttributeDefinition` | Definição de atributo de evento (event) com obrigatoriedade |
+| `TelemetryEventDefinition` | Descrição de evento e definições de atributos |
+| `TelemetryParentDefinition` | Regra de open, external-root ou finite schema-parent |
+| `TelemetrySchemaSpanName` | União (Union) dos nomes de span declarados |
+| `TelemetrySchemaSpanStartAttributes` | Atributos inferidos exatos de start para um span |
+| `TelemetrySchemaSpanEndAttributes` | Atributos inferidos de end opcionais para um span |
+| `TelemetrySchemaSpanEventName` | União dos eventos declarados por um span |
+| `TelemetrySchemaSpanEventAttributes` | Atributos inferidos exatos para um evento |
+| `SchemaTelemetrySpan` | Visualização do span restrita a um span de schema |
+| `TelemetrySchemaSpanUnion` | União discriminada de todos os spans em um schema |
+| `InferStartAttributes` | Valores obrigatórios e opcionais inferidos das definições de start |
+| `InferOptionalAttributes` | Valores opcionais inferidos das definições de end |
+| `InferEventAttributes` | Valores obrigatórios e opcionais inferidos das definições de evento |
+| `InferRequiredAndOptionalAttributes` | Utilitário de inferência compartilhado para definições com obrigatoriedade |
+| `ExactTelemetryAttributes` | Rejeita chaves fora de um conjunto esperado de atributos |
 
 ### Testing subpath
 
 | Export | Purpose |
 |---|---|
-| `createTelemetryAdapterConformance()` | Creates runner-independent adapter conformance cases |
-| `TelemetryAdapterFixture` | Fresh context and normalized snapshot reader for one case |
-| `TelemetryAdapterFixtureFactory` | Creates isolated fixtures |
-| `TelemetryAdapterConformanceCase` | Grouped case that test runners execute |
+| `createTelemetryAdapterConformance()` | Cria casos independentes da plataforma (runner) para averiguar conformidade nativa aos adaptadores (adapter conformance cases) |
+| `TelemetryAdapterFixture` | Leitor em normalizados de snapshot (normalized snapshot reader) bem como ambiente (context) passivo focado a um caso único |
+| `TelemetryAdapterFixtureFactory` | Fabrica e implementa as instâncias isoladas |
+| `TelemetryAdapterConformanceCase` | Caso de uso testável no foco a ser provido nos ambientes de execução (test runners) |
 
 ## Development
 
-From this package directory:
+A partir do diretório deste pacote:
 
 ```bash
 npm test
 npm run build
 ```
 
-Repository-wide type checking, formatting, linting, and smoke checks run with:
+Checagem de tipos, formatação, linting e verificações smoke em todo o repositório rodam com:
 
 ```bash
 npm run check

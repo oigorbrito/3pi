@@ -1,33 +1,33 @@
 # Pi evals
 
-Behavioral evals for Pi's coding agent, built with `vitest-evals`.
+Evals comportamentais para o coding agent do Pi, construídos com `vitest-evals`.
 
 ## File conventions
 
-Eval definitions are flat under `evals/`:
+As definições de eval são planas sob `evals/`:
 
-- `*.docs.eval.ts` is a documentation-lift eval. `eval:docs` runs each case in isolated `without_docs` and `with_docs` containers and reports lift.
-- Other `*.eval.ts` files are host evals. `eval:host` runs them with Vitest on this machine. They are ordinary vitest-evals suites, not paired comparisons.
+- `*.docs.eval.ts` é um eval de elevação (lift) de documentação. `eval:docs` roda cada caso em containers isolados `without_docs` e `with_docs` e relata o lift.
+- Outros arquivos `*.eval.ts` são evals de host. `eval:host` roda-os com Vitest nesta máquina. Eles são suítes comuns do vitest-evals, não comparações pareadas.
 
-Runner code lives in `src/`:
+O código do runner fica em `src/`:
 
-- `cli.ts` orchestrates a comparison
-- `docker.ts` builds the two images, discovers cases, and runs one isolated arm
-- `plan.ts` expands cases into `(case, variant, repetition)` tasks
-- `report.ts` reads Vitest JSON, pairs arms, and computes lift
-- `harness.ts` is the vitest-evals adapter
+- `cli.ts` orquestra uma comparação
+- `docker.ts` faz o build das duas imagens, descobre os casos e roda um braço isolado
+- `plan.ts` expande os casos em tarefas `(case, variant, repetition)`
+- `report.ts` lê o JSON do Vitest, pareia os braços e calcula o lift
+- `harness.ts` é o adaptador do vitest-evals
 
-Eval suites and their fixtures live under `evals/`. Image build files live in `docker/`.
+As suítes de eval e seus fixtures ficam sob `evals/`. Os arquivos de build de imagem ficam em `docker/`.
 
 ## Run evals
 
-Host evals (smoke, documentation audit) and documentation-lift evals need `PI_PROVIDER` and `PI_MODEL`.
+Evals de host (smoke, auditoria de documentação) e evals de lift de documentação precisam de `PI_PROVIDER` e `PI_MODEL`.
 
 ```bash
 PI_PROVIDER=openai-codex PI_MODEL=gpt-5.6-sol npm run eval -w packages/evals
 ```
 
-That runs host evals, then the documentation comparison. Extra CLI flags after `--` go to `eval:docs` only.
+Isso roda os evals de host e, em seguida, a comparação de documentação. Flags extras da CLI após `--` vão apenas para `eval:docs`.
 
 Host only:
 
@@ -35,7 +35,7 @@ Host only:
 PI_PROVIDER=openai-codex PI_MODEL=gpt-5.6-sol npm run eval:host -w packages/evals
 ```
 
-One host suite:
+Uma suíte host:
 
 ```bash
 PI_PROVIDER=openai-codex PI_MODEL=gpt-5.6-sol \
@@ -44,7 +44,7 @@ PI_PROVIDER=openai-codex PI_MODEL=gpt-5.6-sol \
 
 ## Run documentation comparisons
 
-From the repository root:
+A partir da raiz do repositório:
 
 ```bash
 npm run eval:docs -w packages/evals -- \
@@ -52,9 +52,9 @@ npm run eval:docs -w packages/evals -- \
   --model gpt-5.6-sol
 ```
 
-`PI_PROVIDER` and `PI_MODEL` provide the same defaults. Both values are required.
+`PI_PROVIDER` e `PI_MODEL` fornecem os mesmos defaults. Ambos os valores são obrigatórios.
 
-The default is one run per variant. Increase repetitions explicitly when measuring stability:
+O padrão é uma execução por variante (variant). Aumente as repetições explicitamente ao medir a estabilidade:
 
 ```bash
 npm run eval:docs -w packages/evals -- \
@@ -62,53 +62,53 @@ npm run eval:docs -w packages/evals -- \
   --runs-per-variant 5
 ```
 
-`PI_EVAL_RUNS_PER_VARIANT=5` is equivalent. Vitest filters are applied during discovery:
+`PI_EVAL_RUNS_PER_VARIANT=5` é equivalente. Filtros do Vitest são aplicados durante a descoberta:
 
 ```bash
 npm run eval:docs -w packages/evals -- -t "adds the model"
 ```
 
-The runner:
+O runner:
 
-1. Mounts the repository ephemerally for a Docker build, packs the current workspace packages using the repository's consumer-install machinery, then creates separate `without_docs` and `with_docs` images from the staged runtime.
-2. Discovers the selected cases in both images and requires identical cohorts.
-3. Plans every `(case, variant, model, runNumber)` arm before execution.
-4. Runs each arm in a fresh container. A failed or missing arm is recorded and the planned cohort continues.
-5. Reads native Vitest JSON through `@vitest-evals/core/node` when a report exists.
-6. Pairs exact arms and writes the comparison report. Blocked pairs withhold headline lift; the process exits nonzero.
+1. Monta o repositório de forma efêmera para um build Docker, empacota os packages atuais do workspace usando o maquinário de instalação consumer do repositório, e então cria imagens separadas `without_docs` e `with_docs` a partir do runtime em staging.
+2. Descobre os casos selecionados em ambas as imagens e requer coortes idênticas.
+3. Planeja cada braço `(case, variant, model, runNumber)` antes da execução.
+4. Roda cada braço em um container novo. Um braço ausente ou com falha é registrado e a coorte planejada continua.
+5. Lê o JSON nativo do Vitest através de `@vitest-evals/core/node` quando um relatório existe.
+6. Pareia os braços exatos e escreve o relatório de comparação. Pares bloqueados retêm o lift de destaque (headline); o processo termina com saída não-zero.
 
-Repetition order alternates by run number to reduce order bias.
+A ordem de repetição se alterna pelo número da execução para reduzir o viés de ordem.
 
 ## Documentation variants
 
-`without_docs` omits the coding-agent `README.md`, `CHANGELOG.md`, `docs/`, and `examples/`, then removes the Pi documentation-routing section from the default system prompt.
+`without_docs` omite o `README.md` do coding-agent, `CHANGELOG.md`, `docs/` e `examples/`, e então remove a seção de roteamento de documentação do Pi do system prompt padrão.
 
-`with_docs` includes those files and uses the unchanged default prompt.
+`with_docs` inclui esses arquivos e usa o prompt padrão inalterado.
 
-Both variants install the same local workspace tarballs. Existing npm overrides ensure coding-agent's internal Pi dependencies also come from the current repository rather than the registry. Documentation and source files from internal dependency packages are removed symmetrically so they cannot act as alternate instructions. Startup validates the image allowlist and verifies that the installed coding-agent package resolves from `dist/`. Eval definitions, evaluator helpers, fixtures, and Vitest configuration are root-owned and unreadable after the harness permanently drops to an unprivileged UID. Each run receives a new home, agent directory, workspace, session directory, and container filesystem.
+Ambas as variantes instalam os mesmos tarballs locais do workspace. Overrides existentes do npm garantem que as dependências internas do Pi do coding-agent também venham do repositório atual em vez do registry. Documentação e arquivos fonte de packages de dependência interna são removidos simetricamente para que não possam atuar como instruções alternativas. A inicialização valida a allowlist da imagem e verifica se o package coding-agent instalado resolve a partir de `dist/`. Definições de eval, helpers de evaluator, fixtures e configurações do Vitest são propriedade do root e ficam ilegíveis depois que o harness cai permanentemente para um UID sem privilégios. Cada execução recebe um novo home, diretório do agent, workspace, diretório de sessão e sistema de arquivos do container.
 
-Documentation evals allow only `read`, `write`, `edit`, `grep`, `find`, and `ls` by default. They do not expose shell or web-search tools. Provider traffic still requires container network access, so Docker alone cannot prove that arbitrary code written by an agent never uses the network.
+Evals de documentação permitem apenas `read`, `write`, `edit`, `grep`, `find` e `ls` por padrão. Eles não expõem ferramentas shell ou de busca na web. Tráfego para o provider ainda requer acesso à rede do container, portanto o Docker sozinho não pode provar que código arbitrário escrito por um agent nunca usa a rede.
 
 ## Results
 
-Each invocation creates an ignored `.eval/<timestamp>_<id>/` directory containing:
+Cada invocação cria um diretório ignorado `.eval/<timestamp>_<id>/` contendo:
 
-- `protocol.json`: model, image IDs, cases, tasks, and protocol digest.
-- `expected-runs.json`: the complete planned cohort.
-- `observations.jsonl`: normalized outcomes and telemetry.
-- `tasks/*/vitest.json`: native JSON for each isolated arm.
-- `<variant>/sessions/*/session.jsonl`: native Pi sessions.
-- `report.json` and `report.txt`: paired comparisons.
+- `protocol.json`: modelo, IDs das imagens, casos, tarefas e digest do protocolo.
+- `expected-runs.json`: a coorte planejada completa.
+- `observations.jsonl`: resultados normalizados e telemetria.
+- `tasks/*/vitest.json`: JSON nativo para cada braço isolado.
+- `<variant>/sessions/*/session.jsonl`: sessões nativas do Pi.
+- `report.json` e `report.txt`: comparações pareadas.
 
-A pair contributes to pass-rate lift only when both arms produce exactly one score. Missing, duplicate, skipped, pending, unscored, or errored arms block the pair. If any pair in an eval set is blocked, headline pass rates are withheld. Missing telemetry remains unavailable rather than being treated as zero.
+Um par contribui para o lift da taxa de aprovação (pass-rate) apenas quando ambos os braços produzem exatamente uma pontuação. Braços ausentes, duplicados, pulados, pendentes, sem pontuação ou com erros bloqueiam o par. Se qualquer par em um conjunto de evals for bloqueado, as taxas de aprovação de destaque são retidas. A telemetria ausente permanece indisponível em vez de ser tratada como zero.
 
-The report flags no lift, negative deltas, saturated controls or treatments, and observed flakiness. One repetition cannot establish stability.
+O relatório sinaliza ausência de lift, deltas negativos, controles ou tratamentos saturados e instabilidade (flakiness) observada. Uma repetição não pode estabelecer estabilidade.
 
-Artifacts may contain prompts, responses, generated code, and tool output.
+Os artifacts podem conter prompts, respostas, código gerado e saída das ferramentas.
 
 ## Write an eval
 
-Use one ordinary `describeEval(...)` suite and one explicit `run(...)` call per case:
+Use uma suíte comum `describeEval(...)` e uma chamada explícita `run(...)` por caso:
 
 ```ts
 import { describeEval, StructuredOutputJudge } from "vitest-evals";
@@ -124,6 +124,6 @@ describeEval("Target workflow", { harness, judges: [judge], judgeThreshold: null
 });
 ```
 
-The outer runner owns variants, repetitions, isolation, identity, persistence, and reporting. Eval files should contain only scenario setup, the model task, and deterministic grading.
+O runner externo é dono das variantes, repetições, isolamento, identidade, persistência e relatórios. Os arquivos de eval devem conter apenas a configuração do cenário, a tarefa do modelo e a classificação determinística.
 
-Use `judgeThreshold: null` for comparative scoring. A low score is data, not an infrastructure failure. Reserve Vitest assertions for broken suite invariants.
+Use `judgeThreshold: null` para pontuação comparativa. Uma pontuação baixa é um dado, não uma falha de infraestrutura. Reserve as asserções do Vitest para invariantes quebras na suíte.

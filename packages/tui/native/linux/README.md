@@ -1,12 +1,12 @@
 # Linux clipboard helper
 
-Provides asynchronous X11 text and image reads using `libxcb.so.1`. Prebuilds support x64 and arm64 on glibc and musl. Reads have bounded waits; if a native operation stalls, the helper remains unavailable until it finishes.
+Fornece leituras assíncronas de texto e imagem no X11 usando `libxcb.so.1`. Prebuilds suportam x64 e arm64 no glibc e musl. As leituras têm esperas limitadas (bounded); se uma operação nativa travar, o helper permanecerá indisponível até que ela termine.
 
-Coding-agent falls back to command-line tools when native reads are unavailable. Wayland reads use `wl-paste`; all Linux writes use the existing command-line or terminal clipboard paths.
+O coding-agent fará fallback para ferramentas de linha de comando quando as leituras nativas estiverem indisponíveis. Leituras no Wayland usam `wl-paste`; todas as escritas no Linux usam a linha de comando existente ou os caminhos da área de transferência do terminal.
 
 ## Building
 
-Install a C compiler and XCB development headers, then run from the repository root on each supported Linux architecture:
+Instale um compilador C e os headers de desenvolvimento do XCB, e então execute a partir da raiz do repositório em cada arquitetura Linux suportada:
 
 ```sh
 npm --prefix packages/tui run build:native:linux
@@ -14,10 +14,10 @@ npm --prefix packages/tui run build:native:linux
 
 ## Testing
 
-Install the build dependencies plus `pkg-config`, `Xvfb`, and `xclip`, then run from `packages/tui`:
+Instale as dependências de build além do `pkg-config`, `Xvfb` e `xclip`, e então execute de `packages/tui`:
 
 ```sh
 node --test test/native-clipboard-linux.test.ts
 ```
 
-Tests use isolated X11 servers, not the desktop clipboard. They skip when dependencies are missing.
+Os testes usam servidores X11 isolados, não a área de transferência do desktop. Eles são ignorados quando faltam dependências.

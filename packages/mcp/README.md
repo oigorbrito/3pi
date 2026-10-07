@@ -1,8 +1,8 @@
 # @earendil-works/3pi-mcp
 
-A small, standalone Model Context Protocol client. It does not depend on the official MCP SDK or other pi packages.
+Um pequeno Model Context Protocol client standalone. Ele não depende do MCP SDK oficial nem de outros pacotes do pi.
 
-The package provides a transport-neutral client core, stdio and Streamable HTTP transports, and an in-memory testing transport.
+O pacote fornece um core de client neutro de transporte, transportes de stdio e HTTP Streamable, além de um transporte in-memory para testes.
 
 ## Usage
 
@@ -25,13 +25,13 @@ const result = await client.callTool("search", { query: "MCP" });
 await client.close();
 ```
 
-For a remote server, use `new StreamableHttpTransport({ url, headers })`. Fetch can be injected for proxying or custom networking.
+Para um servidor remoto, use `new StreamableHttpTransport({ url, headers })`. O Fetch pode ser injetado para proxying ou networking customizado.
 
 ### Tools for an LLM
 
-`toLlmContent(result)` converts a `CallToolResult` to text and image content for a model, in the shape of `@earendil-works/3pi-ai`'s `TextContent` and `ImageContent`. Text and images pass through, embedded text and image resources are unwrapped, and audio, resource links, and binary resources become short text placeholders. A result without content blocks but with `structuredContent` becomes its JSON.
+`toLlmContent(result)` converte um `CallToolResult` para texto e imagem para um modelo, no formato `TextContent` e `ImageContent` do `@earendil-works/3pi-ai`. Textos e imagens passam direto, os recursos incorporados de texto e imagem são desempacotados, e áudios, links de recursos, e recursos binários se tornam curtos textos placeholders. Um result sem blocos de conteúdo mas com `structuredContent` se torna seu JSON.
 
-Wrapping an MCP tool as a `pi-agent-core` `AgentTool`:
+Embrulhando uma ferramenta MCP como uma `AgentTool` do `pi-agent-core`:
 
 ```typescript
 import type { AgentTool } from "@earendil-works/3pi-agent-core";
@@ -53,11 +53,11 @@ const tools: AgentTool[] = (await client.listTools()).map((tool) => ({
 }));
 ```
 
-The [mcp-codemode example](https://github.com/earendil-works/pi/tree/main/packages/agent/examples/mcp-codemode) also forwards progress, passes `structuredContent` through, and lets `@earendil-works/3pi-codemode` scripts call the tools.
+O exemplo [mcp-codemode](https://github.com/earendil-works/pi/tree/main/packages/agent/examples/mcp-codemode) também encaminha progresso, passa o `structuredContent` através, e permite que scripts do `@earendil-works/3pi-codemode` chamem as ferramentas.
 
 ### OAuth
 
-`@earendil-works/3pi-mcp/oauth` provides the MCP OAuth client subset without depending on the official SDK:
+`@earendil-works/3pi-mcp/oauth` fornece o subconjunto OAuth do client MCP sem depender do SDK oficial:
 
 ```typescript
 import { McpClient, StreamableHttpTransport } from "@earendil-works/3pi-mcp";
@@ -107,30 +107,30 @@ const { client, connected } = connect();
 await connected;
 ```
 
-Inject `McpOAuthStateStore` into `McpOAuthProvider` for durable credentials. The package does not open a browser or choose where credentials are stored.
+Injete `McpOAuthStateStore` dentro de `McpOAuthProvider` para credenciais duráveis. O pacote não abre um navegador nem escolhe onde as credenciais são armazenadas.
 
-The OAuth implementation is adapted from the MIT-licensed Model Context Protocol TypeScript SDK v1.29.0. Its license is included under `LICENSES/`.
+A implementação OAuth é adaptada do Model Context Protocol TypeScript SDK v1.29.0 sob licença MIT. Sua licença está inclusa em `LICENSES/`.
 
-An MCP transport owns framing and I/O. It delivers individual JSON-RPC messages to `McpClient`; the client owns request correlation, initialization, timeouts, cancellation, server requests, and protocol-level helpers.
+Um transporte MCP possui seu próprio framing e I/O. Ele entrega mensagens JSON-RPC individuais ao `McpClient`; o client gerencia a correlação de requests, inicialização, timeouts, cancelamentos, requisições de servidor e helpers de nível de protocolo.
 
 ## Supported protocol surface
 
-- MCP protocol version `2025-11-25`, accepting servers that negotiate `2025-06-18`, `2025-03-26`, or `2024-11-05`
-- initialization and `notifications/initialized`
+- Protocolo MCP versão `2025-11-25`, aceitando servidores que negociem `2025-06-18`, `2025-03-26` ou `2024-11-05`
+- inicialização e `notifications/initialized`
 - ping
-- paginated `tools/list`
-- `tools/call`, including structured content
-- progress notifications and timeout renewal
-- request cancellation
-- Streamable HTTP sessions, the server-to-client GET stream with reconnection, and resumption of dropped response streams with `Last-Event-ID`
-- stdio shutdown per the spec (close stdin, then SIGTERM, then SIGKILL), applied to the server's whole process group
-- server `ping` and `roots/list` requests
-- logging and tool-list-change notifications through the generic notification API
-- OAuth protected-resource and authorization-server discovery
-- PKCE authorization code flow, dynamic client registration, token refresh (one refresh shared by concurrent 401s), and step-up authorization for `insufficient_scope`
+- `tools/list` paginado
+- `tools/call`, incluindo structured content
+- notificações de progresso e renovação de timeout
+- cancelamento de requisição
+- sessões Streamable HTTP, o fluxo server-to-client GET com reconexão e retomada (resumption) de resposta do stream com `Last-Event-ID`
+- encerramento stdio conforme especificação (fecha o stdin, depois SIGTERM, depois SIGKILL), aplicado ao grupo de processo completo do servidor
+- requisições do servidor para `ping` e `roots/list`
+- logs e notificações de mudanças em tool-list via API genérica de notificação
+- detecção de OAuth protected-resource e authorization-server
+- fluxo de código de autorização PKCE, client registration dinâmico, renovação de token (refresh compartilhado por 401s concorrentes) e step-up authorization para `insufficient_scope`
 
-Batch JSON-RPC messages, legacy HTTP+SSE, servers, sampling, and tasks are outside the initial core.
+Lotes JSON-RPC, HTTP+SSE legados, servidores, sampling e tasks estão fora do core inicial.
 
 ## Testing
 
-`@earendil-works/3pi-mcp/testing` exports `createInMemoryTransportPair()` for client and adapter tests.
+`@earendil-works/3pi-mcp/testing` exporta `createInMemoryTransportPair()` para testes de clientes e adapters.

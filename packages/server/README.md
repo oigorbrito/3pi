@@ -1,18 +1,18 @@
 # @earendil-works/3pi-server
 
-Experimental local server that routes clients to application-hosted durable Sessions.
+Servidor local experimental que roteia clientes para Sessões (durable Sessions) hospedadas em aplicativos.
 
-The current slice supports server- and Session-scoped facet-service routing and multi-presentation attachment. `RoutedServerServiceHost.attachClient()` creates one connection-scoped server service endpoint with narrow attachment-management capabilities. `RoutedSessionHandle.attachClient()` returns a presentation-scoped Session capability. Its `invokeService()` forwards an opaque service/member envelope to the selected Session endpoint; the server validates the attachment route but does not load the facet contract.
+A versão atual suporta roteamento de serviços de faceta (facet-service routing) com escopo de servidor e de Sessão e anexos de apresentação múltipla (multi-presentation attachment). `RoutedServerServiceHost.attachClient()` cria um endpoint de serviço de servidor com escopo de conexão (connection-scoped) que tem recursos limitados de gerenciamento de anexo. `RoutedSessionHandle.attachClient()` retorna uma capability de Sessão com escopo de apresentação (presentation-scoped). Seu `invokeService()` encaminha um envelope opaco de service/member para o endpoint da Sessão selecionada; o servidor valida a rota do anexo, mas não carrega o contrato da faceta (facet contract).
 
-- server service calls and subscriptions route opaquely through the connection's `RoutedServerServiceAttachment`;
-- the application-owned `SessionDirectory` projects the private catalog into replicated presentation-safe state;
-- the application-owned `SessionManagement` creates, removes, attaches, and detaches Sessions without exposing route IDs in business results;
-- attachment changes are published out of band after the router installs or clears the live route;
-- Session service calls route through `invokeService` without server-side business-payload decoding;
-- service subscription updates remain scoped to the requesting attachment;
-- application observations such as transcripts route as ordinary service state without server-owned business schemas.
+- chamadas de serviço de servidor e subscrições são roteadas de forma opaca através do `RoutedServerServiceAttachment` da conexão;
+- o `SessionDirectory`, de propriedade da aplicação, projeta o catálogo privado em um estado seguro para apresentação e replicado;
+- o `SessionManagement`, de propriedade da aplicação, cria, remove, anexa (attaches) e desanexa Sessões sem expor IDs de rota em resultados de negócios;
+- as mudanças de anexo (attachment changes) são publicadas fora de banda depois que o roteador instala ou limpa a rota ativa (live route);
+- as chamadas de serviço de Sessão são roteadas por meio de `invokeService` sem a decodificação de payloads de negócios no lado do servidor;
+- as atualizações de subscrição de serviço permanecem no escopo do anexo que fez a requisição;
+- as observações da aplicação, como transcripts, são roteadas como um estado de serviço comum sem schemas de negócios pertencentes ao servidor.
 
-A Session may have multiple presentation attachments. Repeating `attach` from one connection is idempotent; every successful attachment has a server-generated `attachmentId` delivered only as routing control data. Session requests carry `{ serverId, sessionId, attachmentId }`, and the server rejects stale or mismatched routes. Losing a connection rejects its local responses but releases its attachment only after admitted service calls settle. The host decides when zero presentation demand and worker-local Harness activity permit worker retirement. Server shutdown closes every routed Session handle, releasing its worker and Session writer ownership.
+Uma Sessão pode ter vários anexos de apresentação. Repetir o `attach` em uma conexão é idempotente; cada anexo bem-sucedido tem um `attachmentId` gerado pelo servidor, entregue apenas como dados de controle de roteamento. Requisições da Sessão carregam `{ serverId, sessionId, attachmentId }`, e o servidor rejeita rotas obsoletas ou que não coincidem. Perder uma conexão rejeita suas respostas locais, mas libera seu anexo apenas depois que as chamadas de serviço admitidas terminam (settle). O host decide quando a ausência de demanda de apresentação e a atividade do Harness local no worker permitem o descarte (retirement) do worker. O encerramento do servidor fecha todos os handles de Sessões roteadas, liberando sua posse de worker e Session writer.
 
 ```ts
 import { randomUUID } from "node:crypto";
@@ -54,10 +54,10 @@ async function startServer(
 }
 ```
 
-Applications supply a required server service host, a bounded Session resolver, and a routed Session factory. `SessionMetadata` only requires an `id`; applications may extend it with their own storage fields. Session discovery and management are application-owned services; the protocol server only asks the resolver for metadata when routing an attachment. The host owns acquiring the worker-local Session and Harness. Failures are cleaned up in that worker. Neither an open JavaScript Session nor a Harness crosses the process boundary.
+As aplicações fornecem um host obrigatório de serviço de servidor, um resolver de Sessão limitado e uma factory de Sessão roteada. O `SessionMetadata` requer apenas um `id`; as aplicações podem estendê-lo com seus próprios campos de armazenamento. A descoberta e o gerenciamento de Sessões são serviços de propriedade da aplicação; o servidor de protocolo apenas pede ao resolver pelos metadados ao rotear um anexo. O host cuida de adquirir a Session local ao worker e do Harness. As falhas são limpas nesse worker. Nem uma Sessão JavaScript aberta nem um Harness cruzam o limite do processo (process boundary).
 
-`serverId` is a logical identity supplied by the launcher, not a socket address. The Unix preset requires an explicit physical `path`; `getUnixSocketPath()` derives one from a caller-selected directory. Choose a short, private runtime directory rather than deriving the route from an unbounded home-directory path. A long-lived launcher can reuse the same ID and path when replacing a server process.
+O `serverId` é uma identidade lógica fornecida pelo launcher, não um endereço de soquete (socket address). O preset do Unix exige um `path` físico explícito; `getUnixSocketPath()` deriva um diretório selecionado pelo chamador. Escolha um diretório de runtime curto e privado, em vez de derivar a rota de um caminho de diretório home ilimitado. Um launcher de longa duração pode reutilizar o mesmo ID e caminho ao substituir um processo de servidor.
 
-`Server` composes transports through `ServerListener`; peer authentication remains application policy and is not implemented by the experimental Unix transport. The Unix submodule provides `createUnixListener()` and `createUnixServer()`. Low-level routed-envelope validation, CBOR, and framing come from `@earendil-works/3pi-protocol`; Chord owns service-control parsing, error codes, snapshots and updates, and each subscription's replicated-state encoder.
+O `Server` compõe transportes através do `ServerListener`; a autenticação de peer continua sendo uma política da aplicação e não é implementada pelo transporte experimental Unix. O submódulo Unix fornece `createUnixListener()` e `createUnixServer()`. A validação de envelope roteado de baixo nível, o CBOR e o framing (enquadramento) vêm de `@earendil-works/3pi-protocol`; o Chord domina o parsing de controle de serviço, códigos de erro, snapshots e atualizações, e o encoder de estado replicado de cada subscrição.
 
-Server and worker lifecycle is managed outside the public Pi protocol. The replaceable application server converts connection attachments into private demand updates; the worker combines generation-tagged demand with authoritative Harness activity. The experimental coordinator only supplies stable routing and reports generic server-generation connection changes.
+O ciclo de vida do servidor e do worker é gerenciado fora do protocolo Pi público. O servidor de aplicação substituível converte anexos de conexão em atualizações de demanda privadas; o worker combina a demanda com marcação de geração com a atividade fidedigna do Harness. O coordenador experimental apenas fornece um roteamento estável e reporta mudanças genéricas de conexão nas gerações de servidor.
