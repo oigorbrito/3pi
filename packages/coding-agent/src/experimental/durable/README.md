@@ -1,66 +1,47 @@
 # durable
 
-A small local coding agent on `@earendil-works/3pi-durable`. One process owns the model runtime, the durable
-Harness, its SQLite storage, and the TUI. It reuses pi's model runtime, auth, settings, system prompt, keybindings,
-theme, and interactive components; the agent itself is the durable Harness with its built-in `CodingTools`.
+Um pequeno agente de codificação local em `@earendil-works/3pi-durable`. Um processo possui o runtime de modelo, a Harness (estrutura) durável, seu armazenamento SQLite, e a TUI. Ele reutiliza o runtime de modelo do pi, autenticação, configurações, system prompt, atalhos de teclado (keybindings), tema, e componentes interativos; o agente em si é a Harness durável com suas `CodingTools` embutidas.
 
 ```bash
 node --import ./packages/coding-agent/src/experimental/source-resolver.ts packages/coding-agent/src/experimental/durable/main.ts
 node --import ./packages/coding-agent/src/experimental/source-resolver.ts packages/coding-agent/src/experimental/durable/main.ts --continue
 ```
 
-A new session starts with pi's default model and thinking level from `settings.json`. `--continue` opens the newest
-session for the current directory. Sessions live under
-`~/.3pi/agent/experimental/durable-sessions/<cwd-hash>/<session>/session.sqlite`; a lock keeps a second process out
-(a lock left by a crash goes stale after 10 seconds, and the next start waits for that). Log in with pi itself;
-credentials are shared.
+Uma nova sessão se inicia com o modelo padrão do pi e com o nível de pensamento (thinking level) vindos de `settings.json`. `--continue` abre a sessão mais recente para o diretório atual. As sessões residem sob `~/.3pi/agent/experimental/durable-sessions/<cwd-hash>/<session>/session.sqlite`; um lock previne a entrada de um segundo processo (um lock deixado por um crash fica obsoleto após 10 segundos, e a próxima inicialização aguardará isso). Faça o login com o próprio pi; as credenciais são compartilhadas.
 
-## What it shows
+## O que ele mostra
 
-- **Durability:** every streamed partial, tool output, queue, and turn is committed. Kill the process in the middle
-  of a tool call and start it again with `--continue`: the interrupted call gets an interrupted result and the turn
-  finishes. Nothing in the TUI handles recovery; it only renders the conversation view.
-- **One view:** the TUI renders `Conversation.viewState()`, the structural mount of the transcript and the built-in
-  documents (`pi.live`, `pi.inbox`, `pi.agent`, `pi.usage`). Streaming, tool progress, the queue, retries,
-  compaction status, the model, and usage all come from it.
-- **Subagents:** the `subagent` tool runs a task in a child conversation owned by the call. `/agents` switches the
-  view to any conversation, also while the subagent works, and the editor then talks to it: steer it while busy, or
-  keep chatting after the call returned. Esc aborts the shown conversation; aborting the main turn aborts its
-  subagents.
-- **Task graph:** a live panel of `Harness.taskGraph()`, shown by default and toggled with `/tasks`: every live task, what it waits on, and the
-  conversations it owns.
+- **Durabilidade:** cada parte (partial) transmitida em stream, saída de ferramenta, fila, e turno é submetida (committed). Interrompa o processo no meio de uma chamada de ferramenta e inicie-o novamente com `--continue`: a chamada interrompida recebe um resultado interrompido e o turno é concluído. Nada na TUI lida com recuperação; ela apenas renderiza a visualização da conversa.
+- **Visualização Única:** a TUI renderiza `Conversation.viewState()`, a montagem estrutural da transcrição e os documentos embutidos (`pi.live`, `pi.inbox`, `pi.agent`, `pi.usage`). Streaming, progresso das ferramentas, a fila, retries, status de compactação, o modelo, e o uso de recursos, tudo vem disso.
+- **Subagentes:** a ferramenta `subagent` roda uma tarefa em uma conversa filha que pertence à chamada. `/agents` muda a visualização para qualquer conversa, inclusive enquanto o subagente trabalha, e o editor então conversa com ele: direcione-o (steer) enquanto estiver ocupado, ou continue a conversa após o retorno da chamada. O Esc aborta o trabalho da conversa sendo exibida; abortar o turno principal aborta seus subagentes.
+- **Grafo de Tarefas:** um painel ao vivo de `Harness.taskGraph()`, exibido por padrão e alternado com `/tasks`: cada tarefa ativa, o que ela aguarda, e as conversas que possui.
 
-## Commands
+## Comandos
 
-- submit: prompt while idle, steer while busy
-- follow-up key (`app.message.followUp`): queue a follow-up
-- Esc: abort the shown conversation's work, including a manual compaction
-- `/model` or the model key: select a model for the shown conversation
-- thinking key (Shift+Tab): cycle thinking levels
-- `/compact [instructions]`: summarize older context; reports "Nothing to compact" when the context fits in
-  `compaction.keepRecentTokens`
-- `/agents`: switch conversations
-- `/tasks`: hide or show the task panel
-- tools expand key (Ctrl+O): expand tool output and compaction summaries
-- clear key (Ctrl+C) or Ctrl+D: exit at once, unlike pi's clear-first Ctrl+C; work in flight resumes with
-  `--continue`
+- enviar (submit): digite o prompt enquanto estiver ocioso, faça direcionamento (steer) enquanto ocupado
+- tecla follow-up (`app.message.followUp`): coloca um follow-up na fila
+- Esc: aborta o trabalho da conversa exibida, incluindo uma compactação manual
+- `/model` ou a tecla do modelo: seleciona um modelo para a conversa exibida
+- tecla de pensamento (Shift+Tab): alterna entre os níveis de pensamento (thinking levels)
+- `/compact [instructions]`: resume contextos antigos; reporta "Nada para compactar" ("Nothing to compact") quando o contexto couber em `compaction.keepRecentTokens`
+- `/agents`: alterna entre as conversas
+- `/tasks`: esconde ou mostra o painel de tarefas
+- tecla de expandir ferramentas (Ctrl+O): expande as saídas de ferramentas e resumos de compactação
+- tecla de limpar (Ctrl+C) ou Ctrl+D: sai imediatamente, ao contrário do Ctrl+C do pi que primeiro limpa; trabalhos em andamento são retomados com `--continue`
 
-## Layout
+## Estrutura (Layout)
 
-| file | role |
+| arquivo | papel |
 | --- | --- |
-| `main.ts` | arguments, open, run, close |
-| `sessions.ts` | session directories and the lock |
-| `runtime.ts` | Harness, registry, settings, environments; the plain `DurableView` and `DurableController` |
-| `prompt.ts` | pi's system prompt sections (tools, rules, docs, AGENTS.md, skills, cwd) as one extension |
-| `subagent.ts` | the foreground subagent tool |
-| `tui.ts` | rendering with pi's interactive components |
+| `main.ts` | argumentos, abrir, rodar, fechar |
+| `sessions.ts` | diretórios da sessão e o lock |
+| `runtime.ts` | Harness, registro, configurações, ambientes; as visualizações diretas `DurableView` e `DurableController` |
+| `prompt.ts` | as seções do system prompt do pi (tools, rules, docs, AGENTS.md, skills, cwd) em uma única extensão |
+| `subagent.ts` | a ferramenta subagente executada em primeiro plano (foreground) |
+| `tui.ts` | renderização usando os componentes interativos do pi |
 
-Compaction thresholds, retry policy, queue modes, and request timeouts come from pi's `settings.json` as loaded at
-startup, read through Harness settings getters at each use. pi's HTTP dispatcher is configured as in pi; without it some provider streams end
-early.
+Limiares de compactação, política de tentativas (retry), modos de fila, e os timeouts das requisições vêm do `settings.json` do pi conforme carregado na inicialização, lidos pelos getters das configurações da Harness em cada uso. O dispatcher HTTP do pi é configurado assim como no pi; sem ele, alguns streams de provedores terminam antes da hora.
 
-A turn that ends without an answer shows a notice; one recovered after a restart does not, since only submissions
-made by this process are watched.
+Um turno que termina sem resposta apresenta um aviso; um que seja recuperado após um reinício não o faz, já que apenas submissões feitas por este processo são acompanhadas (watched).
 
-Not here: sessions list and resume picker, forks and tree navigation, extensions, prompt templates, images, `/login`.
+O que não está aqui: a lista de sessões e o seletor para continuar, ramificações (forks) e navegação em árvore, extensões, modelos de prompt (prompt templates), imagens, `/login`.

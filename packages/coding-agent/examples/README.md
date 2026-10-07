@@ -1,39 +1,39 @@
-# Examples
+# Exemplos
 
-Example code for the pi-coding-agent SDK, process integration, and extensions.
+Códigos de exemplo para o SDK do pi-coding-agent, integração de processos e extensões.
 
-## CLI integration
+## Integração via CLI
 
-[`rpc-client.ts`](rpc-client.ts) uses the typed `RpcClient` to run Pi in a child process, stream events, and wait for the run to settle.
+[`rpc-client.ts`](rpc-client.ts) utiliza o typed `RpcClient` para executar o Pi em um processo filho, fazer streaming de eventos e aguardar que a execução seja concluída (settle).
 
-Build the coding-agent package before running it from a repository checkout:
+Compile (build) o pacote coding-agent antes de executá-lo a partir do checkout de um repositório:
 
 ```bash
 node examples/rpc-client.ts "Explain this repository"
 ```
 
-## Directories
+## Diretórios
 
 ### [sdk/](sdk/)
-Programmatic usage via `createAgentSession()`. Shows how to customize models, prompts, tools, extensions, and session management.
+Uso programático via `createAgentSession()`. Mostra como customizar modelos, prompts, ferramentas, extensões e o gerenciamento de sessões.
 
 ### [extensions/](extensions/)
-Example extensions demonstrating:
-- Lifecycle event handlers (tool interception, safety gates, context modifications)
-- Custom tools (todo lists, questions, subagents, output truncation)
-- Commands and keyboard shortcuts
-- Custom UI (footers, headers, editors, overlays)
-- Git integration (checkpoints, auto-commit)
-- System prompt modifications and custom compaction
-- External integrations (SSH, file watchers, system theme sync)
-- Custom providers (Anthropic with custom streaming, GitLab Duo)
+Exemplos de extensões demonstrando:
+- Manipuladores de eventos de ciclo de vida (interceptação de ferramentas, portões de segurança, modificações no contexto)
+- Ferramentas customizadas (listas de tarefas, perguntas, subagentes, truncamento de saída)
+- Comandos e atalhos de teclado
+- UI customizada (rodapés, cabeçalhos, editores, overlays)
+- Integração com Git (checkpoints, auto-commit)
+- Modificações no system prompt e compactação customizada
+- Integrações externas (SSH, monitores de arquivo, sincronização de tema com o sistema)
+- Provedores customizados (Anthropic com streaming customizado, GitLab Duo)
 
 ### [plugins/pi-example-plugin/](plugins/pi-example-plugin/)
-An experimental plugin package that Pi automatically builds into separate Session-worker and TUI Chord facets.
+Um pacote de plugin experimental que o Pi compila automaticamente em facetas independentes de Session-worker e TUI no Chord.
 
-## Documentation
+## Documentação
 
-- [SDK Examples](sdk/README.md)
-- [CLI Integration](../docs/cli-integration.md)
-- [Extensions Documentation](../docs/extensions.md)
-- [Skills Documentation](../docs/skills.md)
+- [Exemplos do SDK](sdk/README.md)
+- [Integração da CLI](../docs/cli-integration.md)
+- [Documentação de Extensões](../docs/extensions.md)
+- [Documentação de Skills](../docs/skills.md)

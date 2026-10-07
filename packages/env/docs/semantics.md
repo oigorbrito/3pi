@@ -1,65 +1,47 @@
-# Semantics
+# Semântica
 
-The reference is Durable's `NodeExecutionEnv` (`packages/durable/src/env/node.ts`) on the remote machine. Durable's
-env conformance suite and `test/differential.test.ts` check each rule below.
+A referência é a `NodeExecutionEnv` (`packages/durable/src/env/node.ts`) do Durable na máquina remota. A suíte de conformidade de env do Durable e `test/differential.test.ts` verificam cada regra abaixo.
 
-## Split of work
+## Divisão de trabalho
 
-| Concern | Where |
+| Preocupação | Onde |
 |---|---|
-| Path resolution: `~` (remote home), `file://`, relative to `cwd`; on Windows drive-relative paths against the remote's working directories | client, the remote system's `path` rules |
-| Abort checkpoints of each method | client, as `NodeExecutionEnv` |
-| Error code mapping (`ENOENT` → `not_found`, ...) | client, as `NodeExecutionEnv`'s `toFileError` |
-| `readFile`'s read sizes, size limit and decoding (`StringDecoder`, byte-order mark kept) over the daemon's `open(path, "r")` | client |
-| `writeFile` in 512 KiB writes with an abort check before each; `appendFile` without checks | client, over one open file |
-| Line reader | client, positional reads and Durable's `StreamDecoder` |
-| Watching: snapshots, native events, polling | daemon, a port of Durable's `NodeFileWatcher` |
-| Timeout validation, result precedence (callback error, timeout, abort, spill failure, exit code) | client |
-| System calls, processes, spill files, line scans | daemon |
-| Command output decoding: per stream, WHATWG UTF-8, only a leading byte-order mark dropped | daemon (`encoding_rs`) |
+| Resolução de caminho: `~` (home remoto), `file://`, relativo ao `cwd`; no Windows caminhos relativos ao drive contra os diretórios de trabalho do remoto | cliente, regras de `path` do sistema remoto |
+| Checkpoints de aborto de cada método | cliente, como `NodeExecutionEnv` |
+| Mapeamento de código de erro (`ENOENT` → `not_found`, ...) | cliente, como `toFileError` do `NodeExecutionEnv` |
+| Tamanhos de leitura do `readFile`, limite de tamanho e decodificação (`StringDecoder`, byte-order mark mantido) sobre o `open(path, "r")` do daemon | cliente |
+| `writeFile` em gravações de 512 KiB com uma verificação de aborto antes de cada uma; `appendFile` sem verificações | cliente, sobre um arquivo aberto |
+| Leitor de linha (Line reader) | cliente, leituras posicionais e `StreamDecoder` do Durable |
+| Observação (Watching): snapshots, eventos nativos, polling | daemon, um port do `NodeFileWatcher` do Durable |
+| Validação de timeout, precedência de resultado (erro de callback, timeout, aborto, falha de spill, exit code) | cliente |
+| Chamadas de sistema (System calls), processos, arquivos de spill, varreduras de linha | daemon |
+| Decodificação da saída do comando: por fluxo (stream), UTF-8 da WHATWG, apenas um byte-order mark inicial é descartado | daemon (`encoding_rs`) |
 
-## Rules the standard libraries do not follow
+## Regras que as bibliotecas padrão não seguem
 
-- Recursive `mkdir`: an existing directory is fine, an existing file fails with `EEXIST`, a file in the way of a parent
-  fails with `ENOTDIR`. Writes create missing parents this way.
-- `rm`: a missing path fails unless `force`; a directory without `recursive` fails with `ERR_FS_EISDIR`
-  (`FileError` code `unknown`).
-- `mkdtemp`: `mkdtemp(3)` of `<tmpdir>/<prefix>XXXXXX`; the prefix is joined with POSIX `path.join`, so `../x` works.
-- `tmpdir`: `TMPDIR`, `TMP`, `TEMP`, then `/tmp` (Termux: `$PREFIX/tmp`), trailing slash removed.
-- `listDir`: names in byte order, like libuv's `scandir`; fails if any entry cannot be lstat'ed. `openDirReader` keeps
-  directory order, skips entries removed meanwhile, and fills each page after skipping. Names that are not UTF-8 are
-  decoded with replacement characters and lstat'ed under that name, so they fail with `ENOENT` as in Node.
-- `openBinaryReader`: nonblocking open; directories fail with `is_directory`, other non-regular files with `invalid`;
-  `noFollow` refuses a final symbolic link (`O_NOFOLLOW`).
-- `readBinaryFile`, `readTextFile` and `openTextLineReader` open any file like `open(path, "r")`: `/dev/null` reads
-  empty, a FIFO blocks until it has a writer, and a directory fails when read (a line reader at `readLine`). A regular
-  file is read up to its size at open; other files to their end.
-- `readBinaryFile` returns a `Buffer`, reader reads a plain `Uint8Array`, as Node does.
-- Windows: error codes are libuv's translations; `rm` of a symbolic link or junction to a directory removes the link;
-  creating a file where a directory exists fails with `EISDIR`; modification times before 1970 are negative.
+- `mkdir` recursivo: um diretório existente é aceito, um arquivo existente falha com `EEXIST`, um arquivo no caminho de um pai falha com `ENOTDIR`. Gravações criam pais ausentes dessa maneira.
+- `rm`: um caminho ausente falha a menos que use `force`; um diretório sem `recursive` falha com `ERR_FS_EISDIR` (código `FileError` `unknown`).
+- `mkdtemp`: `mkdtemp(3)` de `<tmpdir>/<prefix>XXXXXX`; o prefixo é unido usando o POSIX `path.join`, de forma que `../x` funciona.
+- `tmpdir`: `TMPDIR`, `TMP`, `TEMP`, depois `/tmp` (Termux: `$PREFIX/tmp`), barra final removida.
+- `listDir`: nomes em ordem de bytes, como no `scandir` da libuv; falha se qualquer entrada não puder sofrer lstat. `openDirReader` mantém a ordem do diretório, pula entradas removidas entretanto, e preenche cada página após pular. Nomes que não são UTF-8 são decodificados com caracteres de substituição e sofrem lstat sob esse nome, então eles falham com `ENOENT` como no Node.
+- `openBinaryReader`: open (abertura) não bloqueante; diretórios falham com `is_directory`, outros arquivos não regulares com `invalid`; `noFollow` recusa um link simbólico final (`O_NOFOLLOW`).
+- `readBinaryFile`, `readTextFile` e `openTextLineReader` abrem qualquer arquivo como `open(path, "r")`: `/dev/null` é lido vazio, um FIFO bloqueia até ter um gravador, e um diretório falha ao ser lido (um leitor de linhas no `readLine`). Um arquivo regular é lido até o seu tamanho na abertura; outros arquivos até o seu final.
+- `readBinaryFile` retorna um `Buffer`, o reader lê em um `Uint8Array` simples, como o Node faz.
+- Windows: códigos de erro são traduções da libuv; um `rm` de um link simbólico ou junção apontando para um diretório remove o link; criar um arquivo onde um diretório existe falha com `EISDIR`; tempos de modificação (modification times) antes de 1970 são negativos.
 
-## Commands
+## Comandos
 
-- A string runs through the shell: a configured `shellPath` that does not exist (following links) fails with
-  `shell_unavailable`; otherwise `/bin/bash`, `which bash`, then `sh`, with `-c`. An argv array runs its program
-  directly; on Windows it is searched like libuv does (working directory, then `PATH`, adding `.com` and `.exe`), and
-  batch files are refused.
-- The working directory must exist (`spawn_error`).
-- Environment: with `inheritEnv` (default), the daemon's environment, then `shellEnv`, then `env`; without it, only
-  `env`.
-- Each command gets a new session (process group), default signal dispositions and an empty signal mask. Timeout,
-  abort and `cleanup()` kill the group with `SIGKILL`.
-- After the process exits, output is still collected until both pipes end, or 100 ms pass without output; the timeout
-  still applies meanwhile. The pipes are closed when the command settles, even if a descendant keeps them open.
-- An abort settles as `aborted`; `cleanup()` kills without aborting, so the command settles with exit code 137.
-- A process killed by a signal reports `128 + signal`.
-- Spill: once the output crosses `spill.afterBytes` or `spill.afterLines` (counted over raw chunks in arrival order, as
-  Node counts), the complete raw output goes to `pi-output-<uuid>.log` in a fresh `tmp-` directory.
+- Uma string roda através do shell: um `shellPath` configurado que não existe (seguindo links) falha com `shell_unavailable`; caso contrário `/bin/bash`, `which bash`, depois `sh`, com `-c`. Um array `argv` roda o seu programa diretamente; no Windows ele é buscado como a libuv faz (diretório de trabalho, depois `PATH`, adicionando `.com` e `.exe`), e arquivos em lote (batch files) são recusados.
+- O diretório de trabalho deve existir (`spawn_error`).
+- Ambiente (Environment): com `inheritEnv` (padrão), o ambiente do daemon, depois `shellEnv`, depois `env`; sem ele, apenas `env`.
+- Cada comando recebe uma nova sessão (grupo de processos), disposições de sinais padrão e uma máscara de sinais vazia. Timeout, aborto e `cleanup()` matam o grupo com `SIGKILL`.
+- Após a saída do processo, a saída continua sendo coletada até que ambos os pipes terminem, ou que se passem 100 ms sem saída; o timeout continua se aplicando nesse ínterim. Os pipes são fechados quando o comando assenta, mesmo se um descendente os mantiver abertos.
+- Um aborto assenta como `aborted`; `cleanup()` mata sem abortar, de modo que o comando assenta com exit code 137.
+- Um processo morto por um sinal reporta `128 + signal`.
+- Spill: assim que a saída cruzar `spill.afterBytes` ou `spill.afterLines` (contados nos fragmentos/chunks brutos na ordem de chegada, como o Node os conta), a saída bruta completa vai para `pi-output-<uuid>.log` num novo diretório `tmp-`.
 
-## Watching
+## Observação (Watching)
 
-- The daemon runs Durable's `NodeFileWatcher` next to the files: native events (inotify, FSEvents) only trigger a
-  debounced rescan, and changes are the difference between snapshots plus the event paths. Reads are not events.
-- Windows and network or FUSE file systems poll, as `NodeExecutionEnv` does; running out of native watches switches to
-  polling and reports `overflow`.
-- When the connection is lost, the client opens the watcher again once a new daemon starts and reports `overflow`.
+- O daemon executa o `NodeFileWatcher` do Durable perto dos arquivos: eventos nativos (inotify, FSEvents) apenas disparam um escaneamento novo sem repique (debounced rescan), e mudanças são a diferença entre os snapshots mais os caminhos de eventos. Leituras não são eventos.
+- Windows e sistemas de arquivos de rede ou FUSE usam de polling (sondagem), como o `NodeExecutionEnv` faz; a falta de watches nativos muda para o polling e avisa (overflow).
+- Quando a conexão for perdida o cliente abre o observador de novo caso o daemon for instanciado lá novamente emitindo do mesmo status de aviso (overflow).

@@ -1,10 +1,10 @@
 ---
-description: Worker implements, reviewer reviews, worker applies feedback
+description: Worker implementa, reviewer revisa, worker aplica o feedback
 ---
-Use the subagent tool with the chain parameter to execute this workflow:
+Use a ferramenta subagent com o parâmetro chain para executar este fluxo de trabalho:
 
-1. First, use the "worker" agent to implement: $@
-2. Then, use the "reviewer" agent to review the implementation from the previous step (use {previous} placeholder)
-3. Finally, use the "worker" agent to apply the feedback from the review (use {previous} placeholder)
+1. Primeiro, use o agente "worker" para implementar: $@
+2. Em seguida, use o agente "reviewer" para revisar a implementação da etapa anterior (use o placeholder {previous})
+3. Finalmente, use o agente "worker" para aplicar o feedback da revisão (use o placeholder {previous})
 
-Execute this as a chain, passing output between steps via {previous}.
+Execute isso como uma chain, passando a saída entre as etapas via {previous}.

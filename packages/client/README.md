@@ -1,6 +1,6 @@
 # @earendil-works/3pi-client
 
-Transport-neutral client for the experimental Pi service protocol.
+Cliente agnóstico em relação ao transporte para o protocolo de serviço experimental Pi.
 
 ```ts
 import { Client, type ByteTransportFactory } from "@earendil-works/3pi-client";
@@ -25,27 +25,27 @@ const result = await client.request(
 );
 ```
 
-The client verifies that the physical endpoint reports the expected logical `serverId`. Server-wide requests carry that ID, and every Session request carries the full live target `{ serverId, sessionId, attachmentId }`. The combined durable address prevents cross-server or cross-session misrouting; the server-generated attachment ID rejects delayed frames after switching or reattaching.
+O cliente verifica se o endpoint físico relata o `serverId` lógico esperado. As requisições (requests) de todo o servidor carregam esse ID, e cada requisição Session carrega o target ativo completo `{ serverId, sessionId, attachmentId }`. O endereço durável combinado evita erros de roteamento cross-server ou cross-session; o attachment ID gerado pelo servidor rejeita frames atrasados após alternância ou re-anexação (reattaching).
 
-Typed server and Session APIs are provided by Chord service bindings owned by the application. `createClientServiceTransport()` adapts a lazily resolved server or Session route to a Chord transport; `request()` and `subscribeService()` remain its low-level primitives. The client uses Chord's service-control parsers and per-subscription state decoder; `pi-protocol` only validates the routed envelope and strict-JSON boundary. A service subscription returns a complete provider snapshot; the binding installs it and then calls `start()` to release updates buffered during hydration. `Client` applies ordered out-of-band attachment changes but deliberately does not construct typed service proxies or interpret application contracts.
+As APIs tipadas de servidor e Session são fornecidas por bindings de serviço do Chord pertencentes ao aplicativo. `createClientServiceTransport()` adapta uma rota de servidor ou Session resolvida de forma preguiçosa (lazily resolved) para um transporte Chord; `request()` e `subscribeService()` continuam sendo seus primitivos de baixo nível. O cliente usa os parsers de controle de serviço do Chord e o decodificador de estado por assinatura; `pi-protocol` valida apenas o envelope roteado e o limite de JSON estrito. Uma assinatura de serviço retorna um snapshot (instantâneo) completo do provider (provedor); o binding o instala e então chama `start()` para liberar atualizações em buffer durante a hidratação. O `Client` aplica alterações de attachment fora de banda (out-of-band) ordenadas, mas deliberadamente não constrói proxies de serviço tipados nem interpreta os contratos da aplicação.
 
-Application observation APIs such as the coding agent's `Transcript` are ordinary Chord services. The client does not interpret their snapshots or updates.
+As APIs de observação do aplicativo, como o `Transcript` do coding agent (agente de codificação), são serviços Chord comuns. O cliente não interpreta seus snapshots (instantâneos) ou atualizações.
 
-On disconnect or disposal, pending requests reject locally, but accepted work may still complete remotely before the attachment is released. The client clears its live attachment route. It never reconnects or replays requests automatically. After disconnection, call `reconnect()`, attach through the application's management service again, and explicitly repeat only operations known to be safe.
+Na desconexão ou no descarte (disposal), as requisições (requests) pendentes rejeitam localmente, mas o trabalho aceito ainda pode ser concluído remotamente antes que o attachment (anexo) seja liberado. O cliente limpa sua rota de attachment ativa. Ele nunca se reconecta ou repete as requisições (requests) automaticamente. Após a desconexão, chame `reconnect()`, anexe por meio do serviço de gerenciamento do aplicativo novamente e repita explicitamente apenas as operações conhecidas como seguras.
 
-The experimental local coordinator only provides a stable endpoint and relays traffic. Replaceable server processes own Session and worker lifecycle outside the public client protocol.
+O coordenador local experimental apenas fornece um endpoint estável e retransmite (relays) o tráfego. Os processos de servidor substituíveis controlam o ciclo de vida da Session e do worker fora do protocolo cliente público.
 
-Call transport handlers as follows:
+Chame os manipuladores de transporte da seguinte forma:
 
-- `handlers.onData(chunk)` for inbound bytes;
-- `handlers.onClose()` for an orderly terminal close;
-- `handlers.onError(error)` for transport failures.
+- `handlers.onData(chunk)` para bytes de entrada;
+- `handlers.onClose()` para um fechamento terminal ordenado;
+- `handlers.onError(error)` para falhas de transporte.
 
-A transport factory creates a fresh authenticated connection for each attempt. Requests are correlated by ID, and server failures are exposed as `ServerError`.
+Uma fábrica de transportes (transport factory) cria uma nova conexão autenticada para cada tentativa. As requisições são correlacionadas por ID e as falhas do servidor são expostas como `ServerError`.
 
-## Unix-domain sockets
+## Sockets de domínio Unix (Unix-domain sockets)
 
-Node.js and Bun consumers can use the separate Unix transport:
+Os consumidores de Node.js e Bun podem usar o transporte Unix separado:
 
 ```ts
 import { Client } from "@earendil-works/3pi-client";
@@ -58,7 +58,7 @@ const client = new Client({
 await client.connect();
 ```
 
-Unix discovery scans an explicit physical-route directory, derives each expected server ID from its filename, and verifies it through the existing handshake:
+O descobrimento (discovery) Unix examina um diretório de rota física (physical-route) explícito, obtém cada ID de servidor esperado a partir de seu nome de arquivo e os verifica através do handshake existente:
 
 ```ts
 import { discoverUnixServers } from "@earendil-works/3pi-client/unix";
@@ -67,6 +67,6 @@ const routes = await discoverUnixServers({ directory: "/run/user/1000/pi" });
 // [{ serverId: "...", path: "/run/user/1000/pi/<serverId>.sock" }]
 ```
 
-Malformed entries, non-sockets, stale or unresponsive endpoints, and server-ID mismatches are ignored. Discovery is read-only and probes at most 16 sockets concurrently. Unexpected filesystem and socket errors reject discovery. Pass `timeoutMs` to override the default probe timeout.
+Entradas malformadas, não-sockets, endpoints desatualizados ou não responsivos e incompatibilidades de servidor ID (server-ID mismatches) são ignoradas. O discovery é apenas leitura e sonda no máximo 16 sockets concorrentemente. Erros inesperados de filesystem e socket rejeitam a descoberta (discovery). Passe `timeoutMs` para substituir o timeout (tempo limite) da sonda padrão.
 
-`ClientOptions.maxFrameLength` bounds protocol payloads. `maxPendingBytes` bounds queued Unix transport output. Configure matching limits on both peers.
+`ClientOptions.maxFrameLength` limita (bounds) os payloads do protocolo. `maxPendingBytes` limita a saída na fila do transporte Unix. Configure limites compatíveis em ambos os peers.

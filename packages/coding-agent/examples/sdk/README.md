@@ -1,36 +1,36 @@
-# SDK Examples
+# Exemplos do SDK
 
-Programmatic usage of pi-coding-agent via `createAgentSession()` and `createAgentSessionRuntime()`.
+Uso programático do pi-coding-agent através de `createAgentSession()` e `createAgentSessionRuntime()`.
 
-The runtime example shows how to build a recreate function that closes over process-global fixed inputs and recreates cwd-bound services and sessions as the active session cwd changes.
+O exemplo de runtime mostra como construir uma função recreate que se encerra (closes over) através de entradas fixas globais do processo e recria serviços ligados ao diretório de trabalho (cwd) assim que o cwd da sessão ativa muda.
 
-## Examples
+## Exemplos
 
-| File | Description |
+| Arquivo | Descrição |
 |------|-------------|
-| `01-minimal.ts` | Simplest usage with all defaults |
-| `02-custom-model.ts` | Select model and thinking level |
-| `03-custom-prompt.ts` | Replace or modify system prompt |
-| `04-skills.ts` | Discover, filter, or replace skills |
-| `05-tools.ts` | Built-in tool allowlists |
-| `06-extensions.ts` | Logging, blocking, result modification |
-| `07-context-files.ts` | AGENTS.md context files |
-| `08-prompt-templates.ts` | File-based prompt templates |
-| `09-api-keys-and-oauth.ts` | API key resolution, OAuth config |
-| `10-settings.ts` | Override compaction, retry, terminal settings |
-| `11-sessions.ts` | In-memory, persistent, continue, list sessions |
-| `12-full-control.ts` | Replace everything, no discovery |
-| `13-session-runtime.ts` | Manage runtime-backed session replacement |
-| `14-codemode-mcp.ts` | Add the `codemode`, `tool_search`, and MCP extensions |
+| `01-minimal.ts` | Uso mais simples com todas as opções padrão |
+| `02-custom-model.ts` | Selecionar modelo e nível de pensamento |
+| `03-custom-prompt.ts` | Substituir ou modificar o system prompt |
+| `04-skills.ts` | Descobrir, filtrar ou substituir skills |
+| `05-tools.ts` | Listas de permissões (allowlists) de ferramentas nativas |
+| `06-extensions.ts` | Logging, bloqueios, e modificação de resultados |
+| `07-context-files.ts` | Arquivos de contexto AGENTS.md |
+| `08-prompt-templates.ts` | Modelos de prompt baseados em arquivos |
+| `09-api-keys-and-oauth.ts` | Resolução de chaves de API, configuração de OAuth |
+| `10-settings.ts` | Substituir definições de compactação, retry e configurações do terminal |
+| `11-sessions.ts` | Sessões em memória, persistentes, continuidade, listagem de sessões |
+| `12-full-control.ts` | Substituir tudo, sem descoberta (discovery) automática |
+| `13-session-runtime.ts` | Gerenciar substituição de sessão com suporte de runtime |
+| `14-codemode-mcp.ts` | Adicionar as extensões `codemode`, `tool_search` e MCP |
 
-## Running
+## Executando
 
 ```bash
 cd packages/coding-agent
 node examples/sdk/01-minimal.ts
 ```
 
-## Quick Reference
+## Referência Rápida
 
 ```typescript
 import { getModel } from "@earendil-works/3pi-ai";
@@ -102,22 +102,22 @@ session.subscribe((event) => {
 await session.prompt("Hello");
 ```
 
-## Options
+## Opções
 
-| Option | Default | Description |
+| Opção | Padrão | Descrição |
 |--------|---------|-------------|
-| `modelRuntime` | Runtime using `agentDir/auth.json` and `models.json` | Canonical model and authentication runtime |
-| `cwd` | `process.cwd()` | Working directory |
-| `agentDir` | `~/.3pi/agent` | Config directory |
-| `model` | From settings/first available | Model to use |
-| `thinkingLevel` | From settings/"off" | off, low, medium, high |
-| `tools` | `["read", "bash", "edit", "write"]` built-ins | Allowlist tool names across built-in, extension, and custom tools |
-| `customTools` | `[]` | Additional tool definitions |
-| `resourceLoader` | DefaultResourceLoader | Resource loader for extensions, skills, prompts, themes, and context files |
-| `sessionManager` | `SessionManager.create(cwd)` | Persistence |
-| `settingsManager` | `SettingsManager.create(cwd, agentDir)` | Settings overrides |
+| `modelRuntime` | Runtime usando `agentDir/auth.json` e `models.json` | Modelo canônico e runtime de autenticação |
+| `cwd` | `process.cwd()` | Diretório de trabalho (working directory) |
+| `agentDir` | `~/.3pi/agent` | Diretório de configurações |
+| `model` | Das configurações/o primeiro disponível | Modelo a ser usado |
+| `thinkingLevel` | Das configurações/"off" | off, low, medium, high |
+| `tools` | As embutidas `["read", "bash", "edit", "write"]` | Lista de ferramentas permitidas (nativas, extensões ou customizadas) |
+| `customTools` | `[]` | Definições de ferramentas adicionais |
+| `resourceLoader` | DefaultResourceLoader | Carregador de recursos (extensões, skills, prompts, temas e arquivos de contexto) |
+| `sessionManager` | `SessionManager.create(cwd)` | Persistência |
+| `settingsManager` | `SettingsManager.create(cwd, agentDir)` | Substituição de configurações (settings overrides) |
 
-## Events
+## Eventos
 
 ```typescript
 session.subscribe((event) => {

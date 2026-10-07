@@ -1,10 +1,10 @@
 # Chord Delta
 
-Chord Delta produces immutable JSON revisions and exact operation batches for
-ordered replicas. Import it from `@earendil-works/chord/delta`.
+O Chord Delta produz revisões JSON imutáveis e lotes de operações exatas para
+réplicas ordenadas. Importe-o de `@earendil-works/chord/delta`.
 
-Immutability is an ownership contract. Nothing is frozen or defensively copied,
-so an illegal mutation is not detected. It silently corrupts state.
+A imutabilidade é um contrato de propriedade. Nada é congelado ou copiado defensivamente,
+então uma mutação ilegal não é detectada. Ela corrompe o estado silenciosamente.
 
 ```ts
 import { applyImmutable, applyImmutableBatches, track } from "@earendil-works/chord/delta";
@@ -25,24 +25,24 @@ tracker.adopt(prepared); // tracker.value === prepared.value
 const replica = applyImmutable(prepared.base, prepared.ops);
 ```
 
-## Mutation rights
+## Direitos de mutação
 
-| Value | May it be mutated? |
+| Valor | Pode sofrer mutação? |
 | --- | --- |
-| Root passed to `track()`, `prepareReplace()`, `replicatedState()`, or `replace()` | No. Ownership moved to the tracker. |
-| `change.state` and handles read from it | Yes, only while that change is open. After `prepare()`, `abort()`, or another adoption, every use throws. Writes through a handle whose element was removed from the draft are ignored. |
-| External value after assigning or inserting it into a draft | Yes. The draft stored a validated clone. |
-| `tracker.value`, `prepared.base`, retained older revisions | No. |
-| `prepared.value`, `prepared.ops`, op tuples, paths, permutations, payloads | No. Payloads may be the same objects as parts of `prepared.value`. |
-| `applyImmutable()` / `applyImmutableBatches()` inputs and result | No. The result shares containers with both inputs. |
-| Values from replicated state (`value`, listener values, loopback consumers) | No. In-process consumers may share the provider's containers. |
-| Mutable replica passed to `apply()` | Only through `apply()`, with batches it owns exclusively. Code that edits it between batches breaks convergence. |
-| Batch passed to `apply()` | Consumed. `apply()` adopts payload containers into the replica. Use a detached copy for exactly one replica and never touch it again. |
+| Root passado para `track()`, `prepareReplace()`, `replicatedState()`, ou `replace()` | Não. A propriedade foi transferida para o tracker. |
+| `change.state` e handles lidos a partir dele | Sim, apenas enquanto essa mudança estiver aberta. Após `prepare()`, `abort()`, ou outra adoção, todo uso lançará erro. Escritas através de um handle cujo elemento foi removido do draft são ignoradas. |
+| Valor externo após ser atribuído ou inserido em um draft | Sim. O draft armazenou um clone validado. |
+| `tracker.value`, `prepared.base`, revisões mais antigas retidas | Não. |
+| `prepared.value`, `prepared.ops`, tuplas op, paths, permutações, payloads | Não. Os payloads podem ser os mesmos objetos que partes de `prepared.value`. |
+| Entradas e resultado de `applyImmutable()` / `applyImmutableBatches()` | Não. O resultado compartilha contêineres com ambas as entradas. |
+| Valores do estado replicado (`value`, valores de listener, consumidores de loopback) | Não. Consumidores em processo podem compartilhar os contêineres do provedor. |
+| Réplica mutável passada para `apply()` | Apenas através de `apply()`, com batches que ele possui exclusivamente. Código que a edita entre batches quebra a convergência. |
+| Batch passado para `apply()` | Consumido. `apply()` adota os contêineres de payload na réplica. Use uma cópia desanexada para exatamente uma réplica e nunca a toque novamente. |
 
-## Replaying batches
+## Reexecutando lotes
 
-Immutable replay is the preferred in-process path. One batch can fan out to any
-number of immutable replicas:
+O replay imutável é o caminho in-process preferido. Um batch pode se expandir (fan out) para qualquer
+número de réplicas imutáveis:
 
 ```ts
 let replica = tracker.value; // shared with authority; never mutated
@@ -50,9 +50,9 @@ let replica = tracker.value; // shared with authority; never mutated
 replica = applyImmutable(replica, prepared.ops); // replica must equal prepared.base
 ```
 
-When only the final result of an ordered backlog is needed, replay its batches
-without concatenating their operations. One copy-on-write scope is shared across
-the complete call, so no intermediate revision is exposed or safe to retain:
+Quando apenas o resultado final de um backlog ordenado é necessário, reexecute seus batches
+sem concatenar suas operações. Um escopo de copy-on-write é compartilhado em toda
+a chamada completa, então nenhuma revisão intermediária é exposta ou é segura para reter:
 
 ```ts
 replica = applyImmutableBatches(
@@ -61,11 +61,11 @@ replica = applyImmutableBatches(
 );
 ```
 
-Use separate `applyImmutable()` calls when every intermediate revision is
-published or retained.
+Use chamadas separadas de `applyImmutable()` quando cada revisão intermediária for
+publicada ou retida.
 
-Mutable replay needs a detached starting root and a detached copy of every batch
-for every replica. Never apply one in-memory batch to two mutable replicas:
+O replay mutável precisa de um starting root desanexado e uma cópia desanexada de cada batch
+para cada réplica. Nunca aplique um batch em memória para duas réplicas mutáveis:
 
 ```ts
 import { apply } from "@earendil-works/chord/delta";
@@ -78,114 +78,111 @@ replica = apply(replica, detach(prepared.ops)); // fresh copy for this replica o
 // Only apply() may change `replica`; do not edit it in application code.
 ```
 
-Parsing a separately serialized message per replica is also a valid detachment.
-`decode()` does not copy payloads, so decoding one in-memory `WireOp[]` for two
-mutable replicas makes them alias each other.
+Analisar (parsing) uma mensagem serializada separadamente por réplica também é um detachment válido.
+`decode()` não copia payloads, então decodificar um `WireOp[]` em memória para duas
+réplicas mutáveis as fará criar alias uma da outra.
 
-## Do and don't
+## O que fazer e o que não fazer
 
-- Do build a fresh root and then transfer it; validate untrusted roots at your ingestion boundary.
-- Do keep structural sharing between revisions, for example `replace(ctx, { ...state.value, changed })`.
-- Do clone or serialize before handing any published value to code that may mutate it.
-- Do settle every change with `prepare()` or `abort()`.
-- Don't reuse one container at two places in a transferred root.
-- Don't mutate anything the tracker owns, published, or received from a batch.
-- Don't keep draft handles past their change or place a settled handle.
-- Don't infer meaning from op shape. Only the resulting value is contractual.
+- Crie um root novo e então transfira-o; valide roots não confiáveis no seu limite de ingestão (ingestion boundary).
+- Mantenha o compartilhamento estrutural (structural sharing) entre revisões, por exemplo `replace(ctx, { ...state.value, changed })`.
+- Clone ou serialize antes de entregar qualquer valor publicado para código que possa mutá-lo.
+- Finalize cada mudança com `prepare()` ou `abort()`.
+- Não reutilize um contêiner em dois lugares em um root transferido.
+- Não sofra mutação de nada que o tracker possua, tenha publicado ou recebido de um batch.
+- Não guarde handles de draft após sua mudança ou coloque um handle que já foi finalizado (settled).
+- Não infira significado do formato do op. Apenas o valor resultante é contratual.
 
-## Roots and placements
+## Roots e placements
 
-Full roots are trusted. `track()` and `prepareReplace()` take ownership in O(1)
-and never walk the tree. Roots must be alias-free, acyclic strict JSON: dense
-plain arrays, plain or null-prototype objects with enumerable own data
-properties, strings, booleans, finite numbers, and `null`. Violations have
-unspecified behavior. For example, a container shared by two keys can make
-`prepared.value` diverge from what replicas compute from `prepared.ops`.
+Roots completos são confiáveis. `track()` e `prepareReplace()` tomam posse em O(1)
+e nunca percorrem a árvore (walk the tree). Roots devem ser JSON estrito, acíclico e livre de aliases: arrays simples e densos, objetos simples ou sem protótipo (null-prototype) com propriedades de dados (data properties) próprias e enumeráveis, strings, booleanos, números finitos e `null`. Violações têm
+comportamento não especificado. Por exemplo, um contêiner compartilhado por duas chaves pode fazer com que
+`prepared.value` divirja do que as réplicas calculam a partir de `prepared.ops`.
 
-Draft placements are copied, and that copy walk also validates. Placements come
-from property writes, index writes, `push`, `unshift`, `splice`, `fill`, and
-`copyWithin`. A non-strict value throws `TypeError` before the draft changes;
-for example, `push(valid, invalid)` inserts nothing. Rejected values include:
-cycles, accessors (never invoked), symbol keys, class instances, sparse or
-non-plain arrays, functions, bigint, `NaN`, infinities, and `undefined`.
-Null-prototype objects are accepted and preserved. Placing a draft handle clones
-its current content. Placing one value at several paths yields independent
-containers.
+Placements de draft são copiados, e esse percurso (walk) de cópia também valida. Placements vêm
+de escritas de propriedades, escritas de índice, `push`, `unshift`, `splice`, `fill` e
+`copyWithin`. Um valor não-estrito lança `TypeError` antes que o draft mude;
+por exemplo, `push(valid, invalid)` não insere nada. Valores rejeitados incluem:
+ciclos, accessors (nunca invocados), chaves symbol, instâncias de classes, arrays esparsos ou
+não-simples, funções, bigint, `NaN`, infinitos e `undefined`.
+Objetos null-prototype são aceitos e preservados. Posicionar um handle de draft clona
+seu conteúdo atual. Posicionar um valor em várias paths produz contêineres independentes.
 
-`undefined` rules:
+Regras de `undefined`:
 
-- `draft.obj.key = undefined` deletes `key`.
-- `arr[i] = undefined`, `push(undefined)`, `unshift`, `splice`, and `fill` with `undefined` throw.
-- `undefined` nested anywhere inside a placed object or array throws. It is not dropped like `JSON.stringify` does.
+- `draft.obj.key = undefined` exclui `key`.
+- `arr[i] = undefined`, `push(undefined)`, `unshift`, `splice` e `fill` com `undefined` lançam erro.
+- `undefined` aninhado em qualquer lugar dentro de um objeto ou array posicionado lança erro. Ele não é descartado como o `JSON.stringify` faz.
 
-Arrays stay dense. Writing past the next index and deleting an element throw.
-Growing `length` inserts `null`; shrinking it removes elements.
+Arrays continuam densos. Escrever além do próximo índice e excluir um elemento lançam erro.
+Aumentar o `length` insere `null`; encolhê-lo remove elementos.
 
-## Lifecycle
+## Ciclo de vida (Lifecycle)
 
-`tracker.value` is the latest adopted revision. `beginChange()` opens an overlay
-draft over it and never modifies it. A draft may stay open across `await`.
-`prepare()` materializes the candidate and ops and does not change authority.
-`adopt()` checks the preparation and swaps the root pointer.
+`tracker.value` é a última revisão adotada. `beginChange()` abre um overlay
+draft sobre ela e nunca a modifica. Um draft pode permanecer aberto através de um `await`.
+`prepare()` materializa o candidato e os ops e não altera a autoridade.
+`adopt()` verifica a preparação e troca o ponteiro do root.
 
-Several changes may be open or prepared from one revision. Adopting one makes all
-others stale: open drafts become unusable and their `prepare()` throws, and
-prepared competitors are rejected by `adopt()`. `adopt()` also rejects foreign,
-aborted, and already consumed preparations. `Change.abort()` or
-`Prepared.abort()` after `prepare()` prevents adoption. The candidate stays
-readable.
+Várias mudanças podem ser abertas ou preparadas a partir de uma revisão. Adotar uma torna todas as
+outras obsoletas (stale): drafts abertos tornam-se inutilizáveis e seu `prepare()` lança erro, e
+concorrentes preparados são rejeitados por `adopt()`. `adopt()` também rejeita preparações externas,
+abortadas e já consumidas. `Change.abort()` ou
+`Prepared.abort()` após `prepare()` impede a adoção. O candidato continua
+legível.
 
-No-op batches:
+Batches sem operação (no-op):
 
-- Empty `ops` means `prepared.value === prepared.base`. Writes restored to their original value and deeply equal container assignments usually normalize to empty.
-- Equality ignores key order and prototype. A deeply equal assignment keeps the previous revision's order and prototype, even if the draft showed the new ones.
-- Structural array edits may emit a nonempty exact batch even when the result is deeply equal.
-- Adopting a no-op still advances `tracker.revision` and stales competitors. Replicated state does not publish no-ops.
+- `ops` vazio significa `prepared.value === prepared.base`. Escritas restauradas para seu valor original e atribuições de contêiner profundamente iguais (deeply equal) geralmente são normalizadas para vazias.
+- A igualdade ignora a ordem da chave e o protótipo. Uma atribuição profundamente igual mantém a ordem e o protótipo da revisão anterior, mesmo que o draft tenha mostrado os novos.
+- Edições estruturais de array podem emitir um exact batch não vazio mesmo quando o resultado for profundamente igual.
+- Adotar um no-op ainda avança `tracker.revision` e torna obsoletos os concorrentes. O estado replicado não publica no-ops.
 
-`prepareReplace(value)` is a whole-root operation, not a diff. If `value` is
-deeply equal to the current root, `ops` is empty and the current root is kept
-(the comparison may traverse both trees). Otherwise `ops` is `[["r", value]]`
-and `prepared.value === value`, so replicas receive the complete root.
+`prepareReplace(value)` é uma operação de root inteiro, não um diff. Se `value` for
+profundamente igual ao root atual, `ops` ficará vazio e o root atual será mantido
+(a comparação pode atravessar ambas as árvores). Caso contrário, `ops` será `[["r", value]]`
+e `prepared.value === value`, para que as réplicas recebam o root completo.
 
-Array mutators: `push`, `pop`, `shift`, `unshift`, `splice`, `reverse`, `sort`,
-`fill`, and `copyWithin`. Held handles follow elements through reindexing.
+Mutators de array: `push`, `pop`, `shift`, `unshift`, `splice`, `reverse`, `sort`,
+`fill`, e `copyWithin`. Os handles retidos acompanham os elementos através da reindexação.
 
-## Operations
+## Operações
 
-Paths contain object keys and non-negative integer array indices.
+As paths contêm chaves de objeto e índices de array de inteiros não negativos.
 
-| Tuple | Meaning |
+| Tupla | Significado |
 | --- | --- |
-| `["r", value]` | Replace the complete value. |
-| `["s", path, value]` | Set an object property or array element. |
-| `["d", path]` | Delete an object property or remove an array element. |
-| `["a", path, text]` | Append to a string. |
-| `["t", path, count]` | Remove `count` UTF-16 code units from a string's front. |
-| `["p", path, index, remove, items]` | Splice an array. |
-| `["m", path, permutation]` | Reorder an array: `new[i] = old[permutation[i]]`. |
+| `["r", value]` | Substitui o valor completo. |
+| `["s", path, value]` | Define uma propriedade de objeto ou elemento de array. |
+| `["d", path]` | Exclui uma propriedade de objeto ou remove um elemento de array. |
+| `["a", path, text]` | Acrescenta a uma string. |
+| `["t", path, count]` | Remove `count` unidades de código UTF-16 do início de uma string. |
+| `["p", path, index, remove, items]` | Executa o splice de um array. |
+| `["m", path, permutation]` | Reordena um array: `new[i] = old[permutation[i]]`. |
 
-Batches are exact but not canonical. The same change may use different tuples,
-and large edit sets may fold into a region splice, an ancestor `s`, or `r`.
+Batches são exatos mas não canônicos. A mesma mudança pode usar tuplas diferentes,
+e grandes conjuntos de edição podem ser combinados (fold) em uma região splice, um ancestral `s`, ou `r`.
 
-Reserved keys: the tracker never emits `__proto__`, `constructor`, or
-`prototype` as a path segment. A mutation at or below such a key is folded into a
-set of the nearest safe ancestor, or `r` at the root. `apply()`, `applyImmutable()`, `applyImmutableBatches()`, and `decoder()` reject
-those segments with `UnsafePathError`.
-The appliers write values as own data properties, never through a prototype setter.
-Appliers check op shape and path safety but not payload strictness. Chord's
-replicated-state replicas validate each resulting revision.
+Chaves reservadas: o tracker nunca emite `__proto__`, `constructor` ou
+`prototype` como um segmento de path. Uma mutação em ou abaixo de tal chave é combinada (folded) em um
+conjunto (set) do ancestral seguro mais próximo, ou `r` na raiz (root). `apply()`, `applyImmutable()`, `applyImmutableBatches()`, e `decoder()` rejeitam
+esses segmentos com `UnsafePathError`.
+Os appliers escrevem valores como propriedades de dados próprias (own data properties), nunca por meio de um setter de prototype.
+Os appliers verificam a forma do op e a segurança da path, mas não a estrita do payload (payload strictness). As réplicas
+de estado replicado do Chord validam cada revisão resultante.
 
-`encoder()` interns repeated paths into `WireOp` tuples; `decoder()` validates
-and restores `Op` tuples. Use one encoder/decoder pair per ordered state stream.
-Path IDs span batches and an `r` resets both dictionaries. After a decode or
-apply error, discard the decoder and replica and recover from a later `r`.
+`encoder()` interna paths repetidas em tuplas `WireOp`; `decoder()` valida
+e restaura tuplas `Op`. Use um par encoder/decoder por fluxo (stream) de estado ordenado.
+Os IDs de path abrangem batches e um `r` redefine ambos os dicionários. Após um erro de decode ou
+apply, descarte o decoder e a réplica e recupere-se de um `r` posterior.
 
-## Limits and footguns
+## Limites e footguns
 
-- No freezing. Mutating any immutable value corrupts state silently.
-- Loopback sharing: in-process service consumers may receive the provider's containers. A consumer mutation corrupts authority and makes remote replicas diverge.
-- A change inside a large flat array copies that array's pointer storage for the new revision.
-- Placement validation costs time and memory on bulk inserts. In a benchmark unshifting 100k three-field objects, it added about 19 ms and 20 MiB of transient heap.
-- External proxies as placements, argument coercion callbacks that mutate the draft, non-primitive array indices, and non-numeric comparator results are out of contract. So are sort comparators that mutate, prepare, abort, or adopt. Behavior is unspecified.
-- Object identity is not replicated. Each path is an independent value placement.
-- One tracker is one revision sequence. Delivery order and persistence belong to the surrounding protocol.
+- Sem congelamento (freezing). Mutar qualquer valor imutável corrompe o estado silenciosamente.
+- Compartilhamento de loopback (Loopback sharing): consumidores de serviço in-process podem receber os contêineres do provedor. Uma mutação do consumidor corrompe a autoridade e faz com que as réplicas remotas divirjam.
+- Uma mudança dentro de um array plano (flat array) grande copia o armazenamento do ponteiro desse array para a nova revisão.
+- A validação de placement custa tempo e memória em inserções em massa. Em um benchmark que fez unshift de objetos de três campos de 100 mil (100k), foram adicionados cerca de 19 ms e 20 MiB de heap transitório.
+- Proxies externos como placements, callbacks de coerção de argumentos que mutam o draft, índices de array não-primitivos e resultados de comparadores não numéricos estão fora do contrato. Assim como comparadores de sort (sort comparators) que preparam (prepare), abortam ou adotam. O comportamento é não especificado.
+- A identidade do objeto não é replicada. Cada path é um placement de valor independente.
+- Um tracker é uma sequência de revisão. A ordem de entrega e a persistência pertencem ao protocolo circundante.

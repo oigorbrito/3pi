@@ -1,50 +1,50 @@
 ---
 name: release
-description: Prepare, publish, verify, and recover pi releases. Use for release preparation, local release smoke tests, publishing, and failed release CI or announcements.
+description: Preparar, publicar, verificar e recuperar releases do pi. Use para preparação de release, testes de fumaça (smoke tests) de release local, publicação e CI de release com falha ou anúncios.
 ---
 
-# Releasing pi
+# Lançando o pi (Release)
 
-Run repository commands from the repo root (two directories above this skill), unless instructed otherwise.
+Execute os comandos do repositório a partir da raiz do repositório (dois diretórios acima desta skill), a menos que instruído de outra forma.
 
-**Lockstep versioning**: all packages share one version; every release updates all together. `patch` = fixes + additions, `minor` = breaking changes. No major releases.
+**Lockstep versioning**: todos os packages compartilham uma versão; toda release atualiza todos juntos. `patch` = correções + adições, `minor` = breaking changes. Sem releases major.
 
-1. **Update CHANGELOGs**: ask the user whether they ran the `/cl` prompt on the latest commit on `main`. If not, they must run `/cl` first to audit and update each package's `[Unreleased]` section before releasing.
+1. **Atualizar CHANGELOGs**: pergunte ao usuário se ele executou o prompt `/cl` no último commit na branch `main`. Caso contrário, ele deve executar `/cl` primeiro para auditar e atualizar a seção `[Unreleased]` de cada package antes de lançar a release.
 
-2. **Local smoke test**: build an unpublished release and smoke test from outside the repo (so it can't resolve workspace files):
+2. **Teste de fumaça (smoke test) local**: compile uma release não publicada e faça o smoke test de fora do repositório (para que não consiga resolver arquivos do workspace):
    ```bash
    npm run release:local -- --out /tmp/pi-local-release --force
    cd /tmp
 
-   # Node package install smoke tests
+   # Testes de fumaça de instalação do package Node
    /tmp/pi-local-release/node/pi --help
    /tmp/pi-local-release/node/pi --version
    /tmp/pi-local-release/node/pi --list-models
    /tmp/pi-local-release/node/pi -p "Say exactly: ok"
    /tmp/pi-local-release/node/pi
 
-   # Bun binary smoke tests
+   # Testes de fumaça do binário do Bun
    /tmp/pi-local-release/bun/pi --help
    /tmp/pi-local-release/bun/pi --version
    /tmp/pi-local-release/bun/pi --list-models
    /tmp/pi-local-release/bun/pi -p "Say exactly: ok"
    /tmp/pi-local-release/bun/pi
    ```
-   Verify both Node and Bun startup, model/account listing, interactive startup, and at least one real prompt with the intended default provider. The bare commands `/tmp/pi-local-release/node/pi` and `/tmp/pi-local-release/bun/pi` start interactive mode; run each in tmux, submit a prompt, and wait for the model reply before considering the interactive smoke test passed. Failures are release blockers unless the user explicitly accepts the risk.
+   Verifique a inicialização do Node e do Bun, listagem de model/conta, inicialização interativa e pelo menos um prompt real com o provedor padrão pretendido. Os comandos isolados `/tmp/pi-local-release/node/pi` e `/tmp/pi-local-release/bun/pi` iniciam o modo interativo; execute cada um no tmux, envie um prompt e aguarde a resposta do model antes de considerar o smoke test interativo como aprovado. Falhas são bloqueadores de release, a menos que o usuário aceite explicitamente o risco.
 
-   Load and follow [interactive-testing.md](interactive-testing.md) for the tmux workflow. Start each release binary from `/tmp`, not the repo root.
+   Carregue e siga [interactive-testing.md](interactive-testing.md) para o fluxo de trabalho do tmux. Inicie cada binário de release de `/tmp`, não da raiz do repositório.
 
-3. **Run the release script**:
+3. **Executar o script de release**:
    ```bash
-   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:patch    # fixes + additions
+   PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:patch    # correções + adições
    PI_ALLOW_LOCKFILE_CHANGE=1 npm_config_min_release_age=0 npm run release:minor    # breaking changes
    ```
-   Use `npm_config_min_release_age=0` only for the release command. The repo's normal npm age gate can otherwise block the release lockfile refresh when the current workspace package version was published recently. Review any lockfile or install lock diffs the release creates before push.
+   Use `npm_config_min_release_age=0` apenas para o comando de release. A restrição de idade (age gate) normal do npm do repositório pode bloquear a atualização do lockfile da release quando a versão do package atual do workspace foi publicada recentemente. Revise qualquer lockfile ou diffs de bloqueio de instalação que a release cria antes de fazer push.
 
-   The release script refreshes the Nix model catalog pin (`nix/model-catalog.json`) if stale, bumps all package versions, updates changelogs, regenerates release artifacts, runs `npm run check`, commits `Release vX.Y.Z`, tags `vX.Y.Z`, adds fresh `## [Unreleased]` changelog sections, commits `Add [Unreleased] section for next cycle`, then pushes `main` and the tag. Do not rerun the release script after a tag was pushed.
+   O script de release atualiza a fixação (pin) do catálogo de models do Nix (`nix/model-catalog.json`) se estiver obsoleto, aumenta (bump) todas as versões dos packages, atualiza os changelogs, regenera os artefatos de release, executa `npm run check`, faz commit de `Release vX.Y.Z`, cria a tag `vX.Y.Z`, adiciona novas seções de changelog `## [Unreleased]`, faz commit de `Add [Unreleased] section for next cycle`, então faz push da `main` e da tag. Não execute novamente o script de release após uma tag ter sido enviada via push.
 
-4. **CI verifies and announces the npm release**: pushing the `vX.Y.Z` tag triggers `.github/workflows/build-binaries.yml`. The `publish-npm` job uses npm trusted publishing through GitHub Actions OIDC with environment `npm-publish`; no local `npm publish`, `npm whoami`, OTP, or WebAuthn flow is required. After publishing, `announce-pi-dev-release` verifies every public workspace package resolves at the exact release version and that its npm tarball is available, then writes the verified release marker to R2. `pi.dev/api/latest-version` reads that marker; it must never announce a release from npm before this job succeeds.
+4. **A CI verifica e anuncia a release no npm**: o push da tag `vX.Y.Z` aciona `.github/workflows/build-binaries.yml`. O job `publish-npm` usa a publicação confiável do npm através do GitHub Actions OIDC com o ambiente `npm-publish`; não é necessário nenhum fluxo de `npm publish`, `npm whoami`, OTP ou WebAuthn local. Após a publicação, `announce-pi-dev-release` verifica se todo package público do workspace resolve na versão exata da release e se seu tarball do npm está disponível, então escreve o marcador de release verificada no R2. `pi.dev/api/latest-version` lê esse marcador; ele nunca deve anunciar uma release do npm antes de este job ser concluído com sucesso.
 
-5. **CI builds the Nix release**: the tag push also triggers `.github/workflows/nix.yml`, which builds the tagged flake on Linux and macOS and then fast-forwards the `stable` branch to the release commit. `nix run github:earendil-works/pi/stable` runs the latest release. If the Nix build fails, `stable` stays on the previous release; the tag cannot be fixed, so fix `main` and ship the fix in the next release.
+5. **A CI compila a release do Nix**: o push da tag também aciona `.github/workflows/nix.yml`, que compila o flake com tag no Linux e no macOS e, em seguida, faz um fast-forward na branch `stable` para o commit da release. `nix run github:earendil-works/pi/stable` executa a versão mais recente. Se a build do Nix falhar, a branch `stable` permanece na release anterior; a tag não pode ser corrigida, então corrija a `main` e lance a correção na próxima release.
 
-6. **If CI publish or announcement fails**: inspect the failed job. The publish helper is idempotent and skips package versions already present on npm; the announcement job rechecks availability before updating the R2 marker. Rerun the failed job or workflow after fixing CI or transient npm issues. Do not rerun `npm run release:patch` or `npm run release:minor` for the same version.
+6. **Se a publicação ou o anúncio da CI falhar**: inspecione o job que falhou. O ajudante de publicação é idempotente e pula as versões de package já presentes no npm; o job de anúncio verifica a disponibilidade novamente antes de atualizar o marcador do R2. Execute novamente o job ou workflow que falhou após corrigir o CI ou problemas transitórios do npm. Não execute novamente `npm run release:patch` ou `npm run release:minor` para a mesma versão.

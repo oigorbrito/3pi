@@ -1,25 +1,25 @@
 ---
-description: Review PRs from URLs with structured issue and code analysis
+description: Revisar PRs de URLs com problema estruturado e análise de código
 argument-hint: "<PR-URL>"
 ---
-You are given one or more GitHub PR URLs: $@
+Você recebeu uma ou mais URLs de GitHub PR: $@
 
-For each PR URL, do the following in order:
-1. Add the `inprogress` label to the PR via GitHub CLI before analysis starts. If adding the label fails, report that explicitly and continue.
-2. Read the PR page in full. Include description, all comments, all commits, and all changed files.
-3. Identify any linked issues referenced in the PR body, comments, commit messages, or cross links. Read each issue in full, including all comments.
-4. Analyze the PR diff without checking out or switching to the PR branch. Use `gh pr diff`, `gh pr view`, `gh api`, and local main-branch files; if PR file contents are needed, use fetched refs with `git show <ref>:<path>` or temporary files. Read all relevant code files in full with no truncation and compare against the diff. Do not fetch PR file blobs unless a file is missing on main or the diff context is insufficient. Include related code paths that are not in the diff but are required to validate behavior.
-5. Do not check for a changelog entry. Per CONTRIBUTING.md, contributor PRs must not edit `CHANGELOG.md` — the maintainer adds the entry when merging.
-6. Check if packages/coding-agent/README.md, packages/coding-agent/docs/*.md, packages/coding-agent/examples/**/*.md require modification. This is usually the case when existing features have been changed, or new features have been added.
-7. Provide a structured review with these sections:
-   - What it does: one short paragraph describing the change and its intent.
-   - Good: solid choices or improvements.
-   - Bad: concrete issues, regressions, missing tests, or risks.
-   - Ugly: subtle or high impact problems.
-   - Tests: what is covered, what is missing, and whether existing tests are adequate.
-   - Open questions for you: only things blocking a merge decision that need the user's input. Omit the section entirely if there are none.
+Para cada URL de PR, faça o seguinte na ordem:
+1. Adicione a label `inprogress` ao PR via GitHub CLI antes de a análise começar. Se a adição da label falhar, relate isso explicitamente e continue.
+2. Leia a página do PR por completo. Inclua descrição, todos os comentários, todos os commits e todos os arquivos alterados.
+3. Identifique quaisquer issues vinculadas referenciadas no corpo do PR, comentários, mensagens de commit ou links cruzados. Leia cada issue por completo, incluindo todos os comentários.
+4. Analise o diff do PR sem fazer checkout ou mudar para o branch do PR. Use `gh pr diff`, `gh pr view`, `gh api` e arquivos locais do branch main; se o conteúdo do arquivo do PR for necessário, use referências obtidas com `git show <ref>:<path>` ou arquivos temporários. Leia todos os arquivos de código relevantes por completo, sem truncamento, e compare com o diff. Não faça fetch dos blobs de arquivo do PR a menos que um arquivo esteja faltando no main ou o contexto do diff seja insuficiente. Inclua caminhos de código relacionados que não estão no diff, mas são necessários para validar o comportamento.
+5. Não verifique por uma entrada no changelog. De acordo com o CONTRIBUTING.md, PRs de contribuidores não devem editar o `CHANGELOG.md` — o mantenedor adiciona a entrada ao fazer o merge.
+6. Verifique se packages/coding-agent/README.md, packages/coding-agent/docs/*.md, packages/coding-agent/examples/**/*.md requerem modificação. Isso geralmente acontece quando features existentes foram alterados, ou novos features foram adicionados.
+7. Forneça uma revisão estruturada com estas seções:
+   - What it does: um parágrafo curto descrevendo a alteração e sua intenção.
+   - Good: escolhas sólidas ou melhorias.
+   - Bad: problemas concretos, regressões, testes ausentes ou riscos.
+   - Ugly: problemas sutis ou de alto impacto.
+   - Tests: o que está coberto, o que está faltando e se os testes existentes são adequados.
+   - Open questions for you: apenas coisas bloqueando uma decisão de merge que precisem do input do usuário. Omita a seção inteiramente se não houver nenhuma.
 
-Output format per PR:
+Formato de saída por PR:
 PR: <url>
 What it does:
 - ...
@@ -34,4 +34,4 @@ Tests:
 Open questions for you:
 - ...
 
-If no issues are found, say so under Bad and Ugly.
+Se nenhum problema for encontrado, diga isso em Bad e Ugly.

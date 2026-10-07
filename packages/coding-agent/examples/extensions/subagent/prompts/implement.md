@@ -1,10 +1,10 @@
 ---
-description: Full implementation workflow - scout gathers context, planner creates plan, worker implements
+description: Fluxo de trabalho completo de implementação - scout reúne contexto, planner cria plano, worker implementa
 ---
-Use the subagent tool with the chain parameter to execute this workflow:
+Use a ferramenta subagent com o parâmetro chain para executar este fluxo de trabalho:
 
-1. First, use the "scout" agent to find all code relevant to: $@
-2. Then, use the "planner" agent to create an implementation plan for "$@" using the context from the previous step (use {previous} placeholder)
-3. Finally, use the "worker" agent to implement the plan from the previous step (use {previous} placeholder)
+1. Primeiro, use o agente "scout" para encontrar todo o código relevante para: $@
+2. Em seguida, use o agente "planner" para criar um plano de implementação para "$@" usando o contexto da etapa anterior (use o placeholder {previous})
+3. Finalmente, use o agente "worker" para implementar o plano da etapa anterior (use o placeholder {previous})
 
-Execute this as a chain, passing output between steps via {previous}.
+Execute isso como uma chain, passando a saída entre as etapas via {previous}.

@@ -1,57 +1,57 @@
 ---
 name: add-llm-provider
-description: Checklist for adding a new LLM provider to packages/ai. Covers core types, provider implementation, lazy registration, model generation, the full test matrix, coding-agent wiring, and docs.
+description: Checklist para adicionar um novo provedor LLM ao packages/ai. Cobre os tipos core, implementação do provedor, lazy registration, model generation, matriz completa de testes, ligações do coding-agent e docs.
 ---
 
-# Adding a New LLM Provider (packages/ai)
+# Adicionando um Novo Provedor LLM (packages/ai)
 
-A new provider touches multiple files. Work through these steps in order.
+Um novo provedor afeta vários arquivos. Trabalhe por essas etapas na ordem.
 
-## 1. Core Types (`packages/ai/src/types.ts`)
+## 1. Tipos Core (`packages/ai/src/types.ts`)
 
-- Add API identifier to `Api` type union (e.g. `"bedrock-converse-stream"`).
-- Create options interface extending `StreamOptions`.
-- Add mapping to `ApiOptionsMap`.
-- Add provider name to `KnownProvider` type union.
+- Adicione o identificador de API ao union type `Api` (por exemplo, `"bedrock-converse-stream"`).
+- Crie a interface de opções estendendo `StreamOptions`.
+- Adicione o mapeamento ao `ApiOptionsMap`.
+- Adicione o nome do provedor ao union type `KnownProvider`.
 
-## 2. Provider Implementation (`packages/ai/src/providers/`)
+## 2. Implementação do Provedor (`packages/ai/src/providers/`)
 
-Create a provider file exporting:
+Crie um arquivo de provedor exportando:
 
-- `stream<Provider>()` returning `AssistantMessageEventStream`.
-- `streamSimple<Provider>()` for `SimpleStreamOptions` mapping.
-- Provider-specific options interface.
-- Message/tool conversion functions.
-- Response parsing that emits standardized events (`text`, `tool_call`, `thinking`, `usage`, `stop`).
+- `stream<Provider>()` retornando `AssistantMessageEventStream`.
+- `streamSimple<Provider>()` para mapeamento de `SimpleStreamOptions`.
+- Interface de opções específica do provedor.
+- Funções de conversão de mensagem/ferramenta (tool).
+- Parsing de resposta que emite eventos padronizados (`text`, `tool_call`, `thinking`, `usage`, `stop`).
 
-## 3. Provider Exports and Lazy Registration
+## 3. Exports do Provedor e Lazy Registration
 
-- Add a package subpath export in `packages/ai/package.json` pointing at `./dist/providers/<provider>.js`.
-- Add `export type` re-exports in `packages/ai/src/index.ts` for provider option types that should remain available from the root entry.
-- Register the provider in `packages/ai/src/providers/register-builtins.ts` via lazy loader wrappers; do not statically import provider implementation modules there.
-- Add credential detection in `packages/ai/src/env-api-keys.ts`.
+- Adicione um export de subpath de package em `packages/ai/package.json` apontando para `./dist/providers/<provider>.js`.
+- Adicione re-exports `export type` em `packages/ai/src/index.ts` para tipos de opções de provedor que devem permanecer disponíveis a partir do entry root.
+- Registre o provedor em `packages/ai/src/providers/register-builtins.ts` por meio de wrappers de carregador lento (lazy loader); não importe módulos de implementação do provedor estaticamente lá.
+- Adicione detecção de credenciais em `packages/ai/src/env-api-keys.ts`.
 
-## 4. Model Generation (`packages/ai/scripts/generate-models.ts`)
+## 4. Geração de Models (`packages/ai/scripts/generate-models.ts`)
 
-- Add logic to fetch/parse models from the provider source.
-- Map to the standardized `Model` interface.
+- Adicione lógica para buscar/analisar (parse) models da fonte do provedor.
+- Mapeie para a interface padronizada `Model`.
 
-## 5. Tests (`packages/ai/test/`)
+## 5. Testes (`packages/ai/test/`)
 
-- Always add the provider to `stream.test.ts` with at least one representative model, even if it reuses an existing API impl such as `openai-completions`.
-- Add the provider to the broader matrix where applicable: `tokens.test.ts`, `abort.test.ts`, `empty.test.ts`, `context-overflow.test.ts`, `unicode-surrogate.test.ts`, `tool-call-without-result.test.ts`, `image-tool-result.test.ts`, `total-tokens.test.ts`, `cross-provider-handoff.test.ts`.
-- For `cross-provider-handoff.test.ts`, add at least one provider/model pair. If the provider exposes multiple model families (e.g. GPT and Claude), add at least one pair per family.
-- For non-standard auth, create a utility (e.g. `bedrock-utils.ts`) with credential detection.
+- Sempre adicione o provedor a `stream.test.ts` com pelo menos um model representativo, mesmo que ele reutilize uma impl de API existente como `openai-completions`.
+- Adicione o provedor à matriz mais ampla, onde aplicável: `tokens.test.ts`, `abort.test.ts`, `empty.test.ts`, `context-overflow.test.ts`, `unicode-surrogate.test.ts`, `tool-call-without-result.test.ts`, `image-tool-result.test.ts`, `total-tokens.test.ts`, `cross-provider-handoff.test.ts`.
+- Para `cross-provider-handoff.test.ts`, adicione pelo menos um par de provedor/model. Se o provedor expõe várias famílias de model (por exemplo, GPT e Claude), adicione pelo menos um par por família.
+- Para autenticação não padrão, crie um utilitário (por exemplo `bedrock-utils.ts`) com detecção de credenciais.
 
 ## 6. Coding Agent (`packages/coding-agent/`)
 
-- `src/core/model-resolver.ts`: add default model ID to `defaultModelPerProvider`.
-- `src/core/provider-display-names.ts`: add API-key login display name so `/login` and related UI show the provider for built-in API-key auth.
-- `src/cli/args.ts`: add env var documentation.
-- `README.md`: add provider setup instructions.
-- `docs/providers.md`: add setup instructions, env var, and `auth.json` key.
+- `src/core/model-resolver.ts`: adicione o ID de model padrão a `defaultModelPerProvider`.
+- `src/core/provider-display-names.ts`: adicione o display name de login da chave de API para que `/login` e a UI relacionada mostrem o provedor para autenticação de API-key embutida.
+- `src/cli/args.ts`: adicione a documentação da variável de ambiente.
+- `README.md`: adicione instruções de configuração do provedor.
+- `docs/providers.md`: adicione instruções de configuração, variável de ambiente e a chave no `auth.json`.
 
-## 7. Documentation
+## 7. Documentação
 
-- `packages/ai/README.md`: add to providers table, document options/auth, add env vars.
-- `packages/ai/CHANGELOG.md`: add entry under `## [Unreleased]`.
+- `packages/ai/README.md`: adicione à tabela de provedores, documente as opções/autenticação e adicione variáveis de ambiente.
+- `packages/ai/CHANGELOG.md`: adicione entrada em `## [Unreleased]`.

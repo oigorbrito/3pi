@@ -1,54 +1,54 @@
 ---
-description: Audit changelog entries before release
+description: Auditar entradas do changelog antes da release
 ---
-Audit changelog entries for all commits since the last release.
+Audite as entradas do changelog para todos os commits desde a última release.
 
-## Process
+## Processo
 
-1. **Find the last release tag:**
+1. **Encontre a última tag de release:**
    ```bash
    git tag --sort=-version:refname | head -1
    ```
 
-2. **List all commits since that tag:**
+2. **Liste todos os commits desde essa tag:**
    ```bash
    git log <tag>..HEAD --oneline
    ```
 
-3. **Read each package's [Unreleased] section:**
+3. **Leia a seção [Unreleased] de cada package:**
    - packages/ai/CHANGELOG.md
    - packages/tui/CHANGELOG.md
    - packages/coding-agent/CHANGELOG.md
 
-4. **For each commit, check:**
-   - Skip: changelog updates, doc-only changes, release housekeeping
-   - Skip: changes to generated model catalogs (for example `packages/ai/src/models.generated.ts`) unless accompanied by an intentional product-facing change in non-generated source/docs.
-   - Determine which package(s) the commit affects (use `git show <hash> --stat`)
-   - Verify a changelog entry exists in the affected package(s)
-   - For external contributions (PRs), verify format: `Description ([#N](url) by [@user](url))`
+4. **Para cada commit, verifique:**
+   - Pular: atualizações de changelog, alterações apenas de docs, tarefas de manutenção (housekeeping) de release
+   - Pular: alterações em catálogos gerados de model (por exemplo `packages/ai/src/models.generated.ts`) a menos que acompanhadas de uma alteração intencional voltada para o produto em código/docs não gerados.
+   - Determine qual package ou packages o commit afeta (use `git show <hash> --stat`)
+   - Verifique se existe uma entrada no changelog no(s) package(s) afetado(s)
+   - Para contribuições externas (PRs), verifique o formato: `Description ([#N](url) by [@user](url))`
 
-5. **Cross-package duplication rule:**
-   Changes in `ai`, `agent` or `tui` that affect end users should be duplicated to `coding-agent` changelog, since coding-agent is the user-facing package that depends on them.
+5. **Regra de duplicação entre packages:**
+   Alterações em `ai`, `agent` ou `tui` que afetam usuários finais devem ser duplicadas para o changelog do `coding-agent`, já que o coding-agent é o package voltado para o usuário que depende deles.
 
-6. **Add New Features section after changelog fixes:**
-   - Insert a `### New Features` section at the start of `## [Unreleased]` in `packages/coding-agent/CHANGELOG.md`.
-   - Propose the top new features to the user for confirmation before writing them.
-   - Link to relevant docs and sections whenever possible.
+6. **Adicionar seção New Features após as correções no changelog:**
+   - Insira uma seção `### New Features` no início de `## [Unreleased]` em `packages/coding-agent/CHANGELOG.md`.
+   - Proponha os principais novos features ao usuário para confirmação antes de escrevê-los.
+   - Faça links para docs relevantes e seções sempre que possível.
 
-7. **Report:**
-   - List commits with missing entries
-   - List entries that need cross-package duplication
-   - Add any missing entries directly
+7. **Relatório:**
+   - Liste os commits com entradas ausentes
+   - Liste as entradas que precisam de duplicação entre packages
+   - Adicione quaisquer entradas ausentes diretamente
 
-## Changelog Format Reference
+## Referência de Formato do Changelog
 
-Sections (in order):
-- `### Breaking Changes` - API changes requiring migration
-- `### Added` - New features
-- `### Changed` - Changes to existing functionality
-- `### Fixed` - Bug fixes
-- `### Removed` - Removed features
+Seções (em ordem):
+- `### Breaking Changes` - Alterações de API exigindo migração
+- `### Added` - Novos features
+- `### Changed` - Alterações em funcionalidades existentes
+- `### Fixed` - Correções de bug
+- `### Removed` - Features removidos
 
-Attribution:
-- Internal: `Fixed foo ([#123](https://github.com/earendil-works/pi/issues/123))`
-- External: `Added bar ([#456](https://github.com/earendil-works/pi/pull/456) by [@user](https://github.com/user))`
+Atribuição:
+- Interna: `Fixed foo ([#123](https://github.com/earendil-works/pi/issues/123))`
+- Externa: `Added bar ([#456](https://github.com/earendil-works/pi/pull/456) by [@user](https://github.com/user))`

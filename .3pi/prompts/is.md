@@ -1,28 +1,28 @@
 ---
-description: Analyze GitHub issues (bugs or feature requests)
+description: Analisar GitHub issues (bugs ou solicitações de recursos)
 argument-hint: "<issue>"
 ---
-Analyze GitHub issue(s): $ARGUMENTS
+Analisar issue(s) do GitHub: $ARGUMENTS
 
-For each issue:
+Para cada issue:
 
-1. If running under CI (`CI=true`), do not add the `inprogress` label and do not assign the issue. Otherwise, add the `inprogress` label to the issue via GitHub CLI and assign the issue to the local `gh` user before analysis starts. If either action fails, report that explicitly and continue.
-2. Read the issue in full, including all comments and linked issues/PRs. Use fields supported by GitHub CLI, for example:
+1. Se estiver rodando em CI (`CI=true`), não adicione a label `inprogress` e não atribua (assign) a issue. Caso contrário, adicione a label `inprogress` à issue via GitHub CLI e atribua a issue ao usuário `gh` local antes da análise começar. Se qualquer ação falhar, relate isso explicitamente e continue.
+2. Leia a issue por completo, incluindo todos os comentários e issues/PRs vinculados. Use campos suportados pelo GitHub CLI, por exemplo:
    ```sh
    gh issue view <issue> --json title,body,comments,labels,assignees,state,url,author,createdAt,updatedAt,closedByPullRequestsReferences
    ```
-3. Do not trust analysis written in the issue. Independently verify behavior and derive your own analysis from the code and execution path.
+3. Não confie na análise escrita na issue. Verifique independentemente o comportamento e derive sua própria análise do código e caminho de execução.
 
-4. **For bugs**:
-   - Ignore any root cause analysis in the issue (likely wrong)
-   - Read all related code files in full (no truncation)
-   - Trace the code path and identify the actual root cause
-   - Propose a fix
+4. **Para bugs**:
+   - Ignore qualquer análise de causa raiz na issue (provavelmente errada)
+   - Leia todos os arquivos de código relacionados por completo (sem truncamento)
+   - Rastreie o caminho do código e identifique a verdadeira causa raiz
+   - Proponha uma correção
 
-5. **For feature requests**:
-   - Do not trust implementation proposals in the issue without verification
-   - Read all related code files in full (no truncation)
-   - Propose the most concise implementation approach
-   - List affected files and changes needed
+5. **Para feature requests**:
+   - Não confie em propostas de implementação na issue sem verificação
+   - Leia todos os arquivos de código relacionados por completo (sem truncamento)
+   - Proponha a abordagem de implementação mais concisa
+   - Liste os arquivos afetados e as alterações necessárias
 
-Do NOT implement unless explicitly asked. Analyze and propose only.
+NÃO implemente a menos que solicitado explicitamente. Analise e proponha apenas.

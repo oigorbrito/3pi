@@ -1,9 +1,9 @@
 ---
-description: Scout gathers context, planner creates implementation plan (no implementation)
+description: Scout reúne contexto, planner cria plano de implementação (sem implementação)
 ---
-Use the subagent tool with the chain parameter to execute this workflow:
+Use a ferramenta subagent com o parâmetro chain para executar este fluxo de trabalho:
 
-1. First, use the "scout" agent to find all code relevant to: $@
-2. Then, use the "planner" agent to create an implementation plan for "$@" using the context from the previous step (use {previous} placeholder)
+1. Primeiro, use o agente "scout" para encontrar todo o código relevante para: $@
+2. Em seguida, use o agente "planner" para criar um plano de implementação para "$@" usando o contexto da etapa anterior (use o placeholder {previous})
 
-Execute this as a chain, passing output between steps via {previous}. Do NOT implement - just return the plan.
+Execute isso como uma chain, passando a saída entre as etapas via {previous}. NÃO implemente - apenas retorne o plano.

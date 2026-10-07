@@ -1,30 +1,30 @@
 # `@earendil-works/3pi-example-plugin`
 
-This package provides conventional `session` and `tui` Chord facets. The Session-worker facet provides a remote greeting service. The TUI facet contributes `/hello` and calls that service.
+Este pacote fornece as facetas de Chord convencionais `session` e `tui`. A faceta Session-worker fornece um serviço de saudação remoto. A faceta TUI contribui com `/hello` e chama esse serviço.
 
-The package needs no build script. Pi asks Chord to discover `src/session.ts` and `src/tui.ts`, builds both entries into its server-owned plugin cache, and sends the TUI artifact to clients.
+O pacote não requer um script de build. O Pi solicita ao Chord a descoberta de `src/session.ts` e `src/tui.ts`, compila ambas as entradas no cache de plugins de propriedade do servidor, e envia o artefato TUI aos clientes.
 
-From the repository root:
+A partir da raiz do repositório:
 
 ```bash
 PI_EXPERIMENTAL=1 ./pi-test.sh server \
   -e "$PWD/packages/coding-agent/examples/plugins/pi-example-plugin"
 ```
 
-Alternatively, a client can select the plugin for the Session it creates or resumes on one local server:
+Alternativamente, um cliente pode selecionar o plugin para a Sessão que cria ou retoma em um servidor local:
 
 ```bash
 PI_EXPERIMENTAL=1 ./pi-test.sh client \
   -e "$PWD/packages/coding-agent/examples/plugins/pi-example-plugin"
 ```
 
-Repeat `-e` to select multiple plugin packages. Client paths are resolved locally and sent only to a Unix server; Radius clients cannot select server filesystem paths. The Session and matching TUI facets are stored with that Session, so later server generations and clients can resume it without plugin arguments. Other Sessions and their workers are unaffected. An active Session rejects a different package selection instead of being restarted.
+Repita o `-e` para selecionar vários pacotes de plugins. Os caminhos de clientes são resolvidos localmente e enviados apenas para um servidor Unix; clientes do Radius não podem selecionar caminhos no sistema de arquivos do servidor. A Sessão e as facetas TUI correspondentes são armazenadas com aquela Sessão, para que gerações de servidor posteriores e clientes possam retomá-la sem os argumentos de plugin. Outras Sessões e seus workers não são afetados. Uma Sessão ativa rejeita seleções de pacotes diferentes em vez de ser reiniciada.
 
-`server -e` establishes the server profile's default Session and TUI facets. Starting an explicit foreground server without `-e` clears that default. Client selection never changes the server's root facet generation.
+`server -e` estabelece as facetas de Sessão e TUI padrão do perfil de servidor. Iniciar um servidor explícito no foreground sem o `-e` limpa o padrão. A seleção pelo cliente nunca altera a geração de faceta raiz do servidor.
 
-Run `/hello Armin` in the TUI. After editing a facet, run `/reload`. The server atomically rebuilds the package, reloads the attached Session-worker generation, updates the current TUI generation, and serves the new artifact to future clients.
+Execute `/hello Armin` no TUI. Após editar uma faceta, execute `/reload`. O servidor reconstrói o pacote de forma atômica, recarrega a geração do Session-worker anexado, atualiza a geração atual do TUI e serve o novo artefato para futuros clientes.
 
-Package metadata can override or disable conventional entries:
+Os metadados do pacote podem sobrescrever ou desativar as entradas convencionais:
 
 ```json
 {

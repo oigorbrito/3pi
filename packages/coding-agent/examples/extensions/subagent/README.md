@@ -1,17 +1,17 @@
-# Subagent Example
+# Exemplo de Subagente (Subagent)
 
-Delegate tasks to specialized subagents with isolated context windows.
+Delegue tarefas a subagentes especializados com janelas de contexto isoladas.
 
-## Features
+## Funcionalidades
 
-- **Isolated context**: Each subagent runs in a separate `pi` process
-- **Streaming output**: See tool calls and progress as they happen
-- **Parallel streaming**: All parallel tasks stream updates simultaneously
-- **Markdown rendering**: Final output rendered with proper formatting (expanded view)
-- **Usage tracking**: Shows turns, tokens, cost, and context usage per agent
-- **Abort support**: Ctrl+C propagates to kill subagent processes
+- **Contexto isolado**: Cada subagente roda em um processo `pi` separado
+- **Saída em streaming**: Veja chamadas de ferramentas e o progresso enquanto acontecem
+- **Streaming paralelo**: Todas as tarefas paralelas transmitem atualizações simultaneamente
+- **Renderização Markdown**: Saída final renderizada com formatação adequada (visualização expandida)
+- **Rastreamento de uso**: Mostra turnos, tokens, custo e uso de contexto por agente
+- **Suporte a interrupção (abort)**: Ctrl+C se propaga para encerrar processos dos subagentes
 
-## Structure
+## Estrutura
 
 ```
 subagent/
@@ -29,9 +29,9 @@ subagent/
     └── implement-and-review.md  # worker -> reviewer -> worker
 ```
 
-## Installation
+## Instalação
 
-From the repository root, symlink the files:
+A partir da raiz do repositório, crie links simbólicos para os arquivos:
 
 ```bash
 # Symlink the extension (must be in a subdirectory with index.ts)
@@ -52,79 +52,79 @@ for f in packages/coding-agent/examples/extensions/subagent/prompts/*.md; do
 done
 ```
 
-## Security Model
+## Modelo de Segurança
 
-This tool executes a separate `pi` subprocess with a delegated system prompt and tool/model configuration.
+Esta ferramenta executa um subprocesso `pi` separado com um system prompt delegado e configuração de ferramentas/modelo.
 
-**Project-local agents** (`.3pi/agents/*.md`) are repo-controlled prompts that can instruct the model to read files, run bash commands, etc.
+**Agentes locais do projeto** (`.3pi/agents/*.md`) são prompts controlados pelo repositório que podem instruir o modelo a ler arquivos, executar comandos bash, etc.
 
-**Default behavior:** Only loads **user-level agents** from `~/.3pi/agent/agents`.
+**Comportamento padrão:** Carrega apenas **agentes de nível de usuário** de `~/.3pi/agent/agents`.
 
-To enable project-local agents, pass `agentScope: "both"` (or `"project"`). Only do this for repositories you trust.
+Para habilitar agentes locais do projeto, passe `agentScope: "both"` (ou `"project"`). Faça isso apenas para repositórios nos quais você confia.
 
-When running interactively, the tool prompts for confirmation before running project-local agents in untrusted projects. Trusted projects skip the additional prompt. Set `confirmProjectAgents: false` to disable confirmation.
+Ao rodar interativamente, a ferramenta pede confirmação antes de executar agentes locais do projeto em projetos não confiáveis. Projetos confiáveis pulam o prompt adicional. Defina `confirmProjectAgents: false` para desabilitar a confirmação.
 
-## Usage
+## Uso
 
-### Single agent
+### Agente único
 ```
 Use scout to find all authentication code
 ```
 
-### Parallel execution
+### Execução paralela
 ```
 Run 2 scouts in parallel: one to find models, one to find providers
 ```
 
-### Chained workflow
+### Fluxo de trabalho em cadeia (Chain)
 ```
 Use a chain: first have scout find the read tool, then have planner suggest improvements
 ```
 
-### Workflow prompts
+### Prompts de fluxo de trabalho
 ```
 /implement add Redis caching to the session store
 /scout-and-plan refactor auth to support OAuth
 /implement-and-review add input validation to API endpoints
 ```
 
-## Tool Modes
+## Modos da Ferramenta
 
-| Mode | Parameter | Description |
+| Modo | Parâmetro | Descrição |
 |------|-----------|-------------|
-| Single | `{ agent, task }` | One agent, one task |
-| Parallel | `{ tasks: [...] }` | Multiple agents run concurrently (max 8, 4 concurrent) |
-| Chain | `{ chain: [...] }` | Sequential with `{previous}` placeholder |
+| Único | `{ agent, task }` | Um agente, uma tarefa |
+| Paralelo | `{ tasks: [...] }` | Vários agentes rodam concorrentemente (máx 8, 4 concorrentes) |
+| Cadeia | `{ chain: [...] }` | Sequencial com placeholder `{previous}` |
 
-## Output Display
+## Exibição da Saída
 
-**Collapsed view** (default):
-- Status icon (✓/✗/⏳) and agent name
-- Last 5-10 items (tool calls and text)
-- Usage stats: `3 turns ↑input ↓output RcacheRead WcacheWrite $cost ctx:contextTokens model`
+**Visão recolhida** (padrão):
+- Ícone de status (✓/✗/⏳) e nome do agente
+- Últimos 5-10 itens (chamadas de ferramentas e texto)
+- Estatísticas de uso: `3 turns ↑input ↓output RcacheRead WcacheWrite $cost ctx:contextTokens model`
 
-**Expanded view** (Ctrl+O):
-- Full task text
-- All tool calls with formatted arguments
-- Final output rendered as Markdown
-- Per-task usage (for chain/parallel)
+**Visão expandida** (Ctrl+O):
+- Texto completo da tarefa
+- Todas as chamadas de ferramentas com argumentos formatados
+- Saída final renderizada como Markdown
+- Uso por tarefa (para chain/paralelo)
 
-**Parallel mode streaming**:
-- Shows all tasks with live status (⏳ running, ✓ done, ✗ failed)
-- Updates as each task makes progress
-- Shows "2/3 done, 1 running" status
-- Returns each completed task's final output to the parent model, capped at 50 KB per task
-- Returns failure diagnostics from stderr/error messages when a child exits before producing output
+**Streaming do modo paralelo**:
+- Mostra todas as tarefas com status ao vivo (⏳ rodando, ✓ concluído, ✗ falhou)
+- Atualiza à medida que cada tarefa avança
+- Mostra o status "2/3 done, 1 running"
+- Retorna a saída final de cada tarefa concluída para o modelo pai, limitada a 50 KB por tarefa
+- Retorna diagnósticos de falha a partir do stderr/mensagens de erro quando um filho é encerrado antes de produzir saída
 
-**Tool call formatting** (mimics built-in tools):
-- `$ command` for bash
-- `read ~/path:1-10` for read
-- `grep /pattern/ in ~/path` for grep
+**Formatação das chamadas de ferramentas** (imita ferramentas nativas):
+- `$ command` para bash
+- `read ~/path:1-10` para read
+- `grep /pattern/ in ~/path` para grep
 - etc.
 
-## Agent Definitions
+## Definições de Agentes
 
-Agents are markdown files with YAML frontmatter:
+Agentes são arquivos markdown com frontmatter YAML:
 
 ```markdown
 ---
@@ -137,41 +137,41 @@ model: claude-haiku-4-5
 System prompt for the agent goes here.
 ```
 
-When `model` is omitted, the subagent inherits the dispatching session's active model and thinking level.
+Quando o `model` é omitido, o subagente herda o modelo ativo e o nível de pensamento (thinking level) da sessão de despacho.
 
-**Locations:**
-- `~/.3pi/agent/agents/*.md` - User-level (always loaded)
-- `.3pi/agents/*.md` - Project-level (only with `agentScope: "project"` or `"both"`)
+**Localizações:**
+- `~/.3pi/agent/agents/*.md` - Nível de usuário (sempre carregado)
+- `.3pi/agents/*.md` - Nível de projeto (apenas com `agentScope: "project"` ou `"both"`)
 
-Project agents override user agents with the same name when `agentScope: "both"`.
+Agentes de projeto sobrescrevem agentes de usuário com o mesmo nome quando `agentScope: "both"`.
 
-## Sample Agents
+## Agentes de Exemplo
 
-| Agent | Purpose | Model | Tools |
+| Agente | Propósito | Modelo | Ferramentas |
 |-------|---------|-------|-------|
-| `scout` | Fast codebase recon | Haiku | read, grep, find, ls, bash |
-| `planner` | Implementation plans | Sonnet | read, grep, find, ls |
-| `reviewer` | Code review | Sonnet | read, grep, find, ls, bash |
-| `worker` | General-purpose | Sonnet | (all default) |
+| `scout` | Reconhecimento rápido da base de código | Haiku | read, grep, find, ls, bash |
+| `planner` | Planos de implementação | Sonnet | read, grep, find, ls |
+| `reviewer` | Revisão de código | Sonnet | read, grep, find, ls, bash |
+| `worker` | Propósito geral | Sonnet | (todas padrão) |
 
-## Workflow Prompts
+## Prompts de Fluxo de Trabalho
 
-| Prompt | Flow |
+| Prompt | Fluxo |
 |--------|------|
 | `/implement <query>` | scout → planner → worker |
 | `/scout-and-plan <query>` | scout → planner |
 | `/implement-and-review <query>` | worker → reviewer → worker |
 
-## Error Handling
+## Tratamento de Erros
 
-- **Exit code != 0**: Tool returns error with stderr/output
-- **stopReason "error"**: LLM error propagated with error message
-- **stopReason "aborted"**: User abort (Ctrl+C) kills subprocess, throws error
-- **Chain mode**: Stops at first failing step, reports which step failed
+- **Código de saída != 0**: Ferramenta retorna erro com stderr/saída
+- **stopReason "error"**: Erro do LLM propagado com mensagem de erro
+- **stopReason "aborted"**: Interrupção do usuário (Ctrl+C) encerra o subprocesso, lança erro
+- **Modo chain**: Para na primeira etapa que falha, reporta qual etapa falhou
 
-## Limitations
+## Limitações
 
-- Output truncated to last 10 items in collapsed view (expand to see all)
-- Parallel model-visible output is capped at 50 KB per task; full results remain in tool details
-- Agents discovered fresh on each invocation (allows editing mid-session)
-- Parallel mode limited to 8 tasks, 4 concurrent
+- Saída truncada aos últimos 10 itens na visão recolhida (expanda para ver todos)
+- A saída paralela visível para o modelo é limitada a 50 KB por tarefa; resultados completos permanecem nos detalhes da ferramenta
+- Agentes são descobertos a cada invocação (permite edição no meio da sessão)
+- Modo paralelo limitado a 8 tarefas, 4 concorrentes

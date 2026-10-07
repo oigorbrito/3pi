@@ -1,27 +1,27 @@
-# Plan Mode Extension
+# Extensão Plan Mode
 
-Read-only exploration mode for safe code analysis.
+Modo de exploração somente leitura (read-only) para análise segura de código.
 
-## Features
+## Funcionalidades
 
-- **Built-in write tools disabled**: Disables edit/write while preserving other active tools
-- **Bash allowlist**: Only read-only bash commands are allowed
-- **Plan extraction**: Extracts numbered steps from `Plan:` sections
-- **Progress tracking**: Widget shows completion status during execution
-- **[DONE:n] markers**: Explicit step completion tracking
-- **Session persistence**: State survives session resume
+- **Ferramentas de escrita embutidas desativadas**: Desativa edição/escrita enquanto preserva outras ferramentas ativas
+- **Allowlist do bash**: Apenas comandos bash somente leitura são permitidos
+- **Extração de plano**: Extrai etapas numeradas de seções `Plan:`
+- **Rastreamento de progresso**: Widget mostra o status de conclusão durante a execução
+- **Marcadores [DONE:n]**: Rastreamento explícito de conclusão de etapa
+- **Persistência de sessão**: O estado sobrevive à retomada da sessão (session resume)
 
-## Commands
+## Comandos
 
-- `/plan` - Toggle plan mode
-- `/todos` - Show current plan progress
-- `Ctrl+Alt+P` - Toggle plan mode (shortcut)
+- `/plan` - Alternar modo de plano (plan mode)
+- `/todos` - Mostrar o progresso do plano atual
+- `Ctrl+Alt+P` - Alternar modo de plano (atalho)
 
-## Usage
+## Uso
 
-1. Enable plan mode with `/plan` or `--plan` flag
-2. Ask the agent to analyze code and create a plan
-3. The agent should output a numbered plan under a `Plan:` header:
+1. Ative o modo de plano (plan mode) com `/plan` ou a flag `--plan`
+2. Peça ao agente para analisar o código e criar um plano
+3. O agente deve produzir um plano numerado sob um cabeçalho `Plan:`:
 
 ```
 Plan:
@@ -30,37 +30,37 @@ Plan:
 3. Third step description
 ```
 
-4. Choose "Execute the plan" when prompted
-5. During execution, the agent marks steps complete with `[DONE:n]` tags
-6. Progress widget shows completion status
+4. Escolha "Execute the plan" quando solicitado
+5. Durante a execução, o agente marca as etapas concluídas com as tags `[DONE:n]`
+6. O widget de progresso mostra o status de conclusão
 
-## How It Works
+## Como Funciona
 
-### Plan Mode (Read-Only)
-- Built-in edit/write tools disabled
-- Other active tools remain available
-- Bash commands filtered through allowlist
-- Agent creates a plan without making changes
+### Modo de Plano (Somente Leitura)
+- Ferramentas de edição/escrita integradas desativadas
+- Outras ferramentas ativas permanecem disponíveis
+- Comandos bash filtrados através de allowlist
+- O agente cria um plano sem fazer alterações
 
-### Execution Mode
-- Full tool access restored
-- Agent executes steps in order
-- `[DONE:n]` markers track completion
-- Widget shows progress
+### Modo de Execução
+- Acesso total às ferramentas restaurado
+- O agente executa os passos em ordem
+- Marcadores `[DONE:n]` acompanham a conclusão
+- O widget mostra o progresso
 
-### Command Allowlist
+### Lista de Comandos Permitidos (Command Allowlist)
 
-Safe commands (allowed):
-- File inspection: `cat`, `head`, `tail`, `less`, `more`
-- Search: `grep`, `find`, `rg`, `fd`
-- Directory: `ls`, `pwd`, `tree`
-- Git read: `git status`, `git log`, `git diff`, `git branch`
-- Package info: `npm list`, `npm outdated`, `yarn info`
-- System info: `uname`, `whoami`, `date`, `uptime`
+Comandos seguros (permitidos):
+- Inspeção de arquivos: `cat`, `head`, `tail`, `less`, `more`
+- Pesquisa: `grep`, `find`, `rg`, `fd`
+- Diretório: `ls`, `pwd`, `tree`
+- Leitura do Git: `git status`, `git log`, `git diff`, `git branch`
+- Informações de pacotes: `npm list`, `npm outdated`, `yarn info`
+- Informações do sistema: `uname`, `whoami`, `date`, `uptime`
 
-Blocked commands:
-- File modification: `rm`, `mv`, `cp`, `mkdir`, `touch`
-- Git write: `git add`, `git commit`, `git push`
-- Package install: `npm install`, `yarn add`, `pip install`
-- System: `sudo`, `kill`, `reboot`
-- Editors: `vim`, `nano`, `code`
+Comandos bloqueados:
+- Modificação de arquivos: `rm`, `mv`, `cp`, `mkdir`, `touch`
+- Escrita do Git: `git add`, `git commit`, `git push`
+- Instalação de pacotes: `npm install`, `yarn add`, `pip install`
+- Sistema: `sudo`, `kill`, `reboot`
+- Editores: `vim`, `nano`, `code`

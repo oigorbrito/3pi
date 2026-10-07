@@ -1,8 +1,8 @@
-# Extension Examples
+# Exemplos de Extensões
 
-Example extensions for pi-coding-agent.
+Exemplos de extensões para pi-coding-agent.
 
-## Usage
+## Uso
 
 ```bash
 # Load an extension with --extension flag
@@ -12,135 +12,135 @@ pi --extension examples/extensions/permission-gate.ts
 cp permission-gate.ts ~/.3pi/agent/extensions/
 ```
 
-## Examples
+## Exemplos
 
-### Lifecycle & Safety
+### Ciclo de Vida & Segurança
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `permission-gate.ts` | Prompts for confirmation before dangerous bash commands (rm -rf, sudo, etc.) |
-| `project-trust.ts` | Demonstrates the `project_trust` event for user/global and CLI extensions |
-| `protected-paths.ts` | Blocks writes to protected paths (.env, .git/, node_modules/) |
-| `confirm-destructive.ts` | Confirms before destructive session actions (clear, switch, fork) |
-| `dirty-repo-guard.ts` | Prevents session changes with uncommitted git changes |
-| `sandbox/` | OS-level sandboxing using `@anthropic-ai/sandbox-runtime` with per-project config |
-| `gondolin/` | Route built-in tools and `!` commands into a Gondolin micro-VM |
+| `permission-gate.ts` | Solicita confirmação antes de comandos bash perigosos (rm -rf, sudo, etc.) |
+| `project-trust.ts` | Demonstra o evento `project_trust` para extensões globais/usuário e da CLI |
+| `protected-paths.ts` | Bloqueia escritas em caminhos protegidos (.env, .git/, node_modules/) |
+| `confirm-destructive.ts` | Confirma antes de ações destrutivas na sessão (limpar, trocar, bifurcar) |
+| `dirty-repo-guard.ts` | Impede mudanças de sessão se houver alterações git não commitadas |
+| `sandbox/` | Sandboxing a nível de OS usando `@anthropic-ai/sandbox-runtime` com configuração por projeto |
+| `gondolin/` | Direciona ferramentas nativas e comandos `!` para uma micro-VM Gondolin |
 
-### Custom Tools
+### Ferramentas Personalizadas
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `todo.ts` | Todo list tool + `/todos` command with custom rendering and state persistence |
-| `hello.ts` | Minimal custom tool example |
-| `question.ts` | Demonstrates `ctx.ui.select()` for asking the user questions with custom UI |
-| `questionnaire.ts` | Multi-question input with tab bar navigation between questions |
-| `tool-override.ts` | Override built-in tools (e.g., add logging/access control to `read`) |
-| `dynamic-tools.ts` | Register tools after startup (`session_start`) and at runtime via command, with prompt snippets and tool-specific prompt guidelines |
-| `structured-output.ts` | Final structured-output tool that returns `terminate: true` so the agent can end on the tool call |
-| `built-in-tool-renderer.ts` | Custom compact rendering for built-in tools (read, bash, edit, write) while keeping original behavior |
-| `minimal-mode.ts` | Override built-in tool rendering for minimal display (only tool calls, no output in collapsed mode) |
-| `truncated-tool.ts` | Wraps ripgrep with proper output truncation (50KB/2000 lines) |
-| `ssh.ts` | Delegate all tools to a remote machine via SSH using pluggable operations |
-| `subagent/` | Delegate tasks to specialized subagents with isolated context windows |
+| `todo.ts` | Ferramenta de lista de tarefas + comando `/todos` com renderização e persistência de estado customizadas |
+| `hello.ts` | Exemplo minimalista de ferramenta customizada |
+| `question.ts` | Demonstra `ctx.ui.select()` para fazer perguntas ao usuário com UI customizada |
+| `questionnaire.ts` | Entrada com múltiplas perguntas e navegação por abas entre elas |
+| `tool-override.ts` | Sobrescreve ferramentas nativas (ex: adiciona log/controle de acesso ao `read`) |
+| `dynamic-tools.ts` | Registra ferramentas após a inicialização (`session_start`) e em tempo de execução via comando, com fragmentos de prompt e diretrizes específicas |
+| `structured-output.ts` | Ferramenta de saída estruturada final que retorna `terminate: true` para que o agente possa terminar após a chamada |
+| `built-in-tool-renderer.ts` | Renderização compacta customizada para ferramentas nativas (read, bash, edit, write) mantendo o comportamento original |
+| `minimal-mode.ts` | Sobrescreve a renderização de ferramentas nativas para modo mínimo (apenas chamadas, sem saída no modo recolhido) |
+| `truncated-tool.ts` | Envolve o ripgrep com truncamento adequado da saída (50KB/2000 linhas) |
+| `ssh.ts` | Delega todas as ferramentas para uma máquina remota via SSH usando operações plugáveis |
+| `subagent/` | Delega tarefas a subagentes especializados com janelas de contexto isoladas |
 
-### Commands & UI
+### Comandos & UI
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `preset.ts` | Named presets for model, thinking level, tools, and instructions via `--preset` flag and `/preset` command |
-| `plan-mode/` | Claude Code-style plan mode for read-only exploration with `/plan` command and step tracking |
-| `tools.ts` | Interactive `/tools` command to enable/disable tools with session persistence |
-| `handoff.ts` | Transfer context to a new focused session via `/handoff <goal>` |
-| `qna.ts` | Extracts questions from last response into editor via `ctx.ui.setEditorText()` |
-| `status-line.ts` | Shows turn progress in footer via `ctx.ui.setStatus()` with themed colors |
-| `github-issue-autocomplete.ts` | Adds `#1234` issue completions by stacking a custom autocomplete provider that preloads open issues from `gh issue list` |
-| `widget-placement.ts` | Shows widgets above and below the editor via `ctx.ui.setWidget()` placement |
-| `hidden-thinking-label.ts` | Customizes the collapsed thinking label via `ctx.ui.setHiddenThinkingLabel()` |
-| `working-indicator.ts` | Customizes the streaming working indicator via `ctx.ui.setWorkingIndicator()` |
-| `model-status.ts` | Shows model changes in status bar via `model_select` hook |
-| `snake.ts` | Snake game with custom UI, keyboard handling, and session persistence |
-| `tic-tac-toe.ts` | Tic-tac-toe vs the agent with `executionMode: "sequential"` tools to prevent race conditions on shared cursor state |
-| `send-user-message.ts` | Demonstrates `pi.sendUserMessage()` for sending user messages from extensions |
-| `timed-confirm.ts` | Demonstrates AbortSignal for auto-dismissing `ctx.ui.confirm()` and `ctx.ui.select()` dialogs |
-| `rpc-demo.ts` | Exercises all RPC-supported extension UI methods; pair with [`examples/rpc-extension-ui.ts`](../rpc-extension-ui.ts) |
-| `modal-editor.ts` | Custom vim-like modal editor via `ctx.ui.setEditorComponent()` |
-| `rainbow-editor.ts` | Animated rainbow text effect via custom editor |
-| `notify.ts` | Desktop notifications via OSC 777 when agent finishes (Ghostty, iTerm2, WezTerm) |
-| `titlebar-spinner.ts` | Braille spinner animation in terminal title while the agent is working |
-| `summarize.ts` | Summarize conversation with GPT-5.2 and show in transient UI |
-| `custom-footer.ts` | Custom footer with git branch and token stats via `ctx.ui.setFooter()` |
-| `custom-header.ts` | Custom header via `ctx.ui.setHeader()` |
-| `overlay-test.ts` | Test overlay compositing with inline text inputs and edge cases |
-| `overlay-qa-tests.ts` | Comprehensive overlay QA tests: anchors, margins, stacking, overflow, animation |
-| `doom-overlay/` | DOOM game running as an overlay at 35 FPS (demonstrates real-time game rendering) |
-| `shutdown-command.ts` | Adds `/quit` command demonstrating `ctx.shutdown()` |
-| `reload-runtime.ts` | Adds `/reload-runtime` and `reload_runtime` tool showing safe reload flow |
-| `interactive-shell.ts` | Run interactive commands (vim, htop) with full terminal via `user_bash` hook |
-| `inline-bash.ts` | Expands `!{command}` patterns in prompts via `input` event transformation |
-| `input-transform-streaming.ts` | Skips expensive input preprocessing for mid-stream steering via `streamingBehavior` |
+| `preset.ts` | Predefinições nomeadas para modelo, nível de pensamento, ferramentas e instruções via flag `--preset` e comando `/preset` |
+| `plan-mode/` | Modo plano no estilo Claude Code para exploração apenas de leitura com comando `/plan` e rastreamento de etapas |
+| `tools.ts` | Comando `/tools` interativo para ativar/desativar ferramentas com persistência na sessão |
+| `handoff.ts` | Transfere contexto para uma nova sessão focada via `/handoff <goal>` |
+| `qna.ts` | Extrai perguntas da última resposta para o editor via `ctx.ui.setEditorText()` |
+| `status-line.ts` | Mostra o progresso do turno no rodapé via `ctx.ui.setStatus()` com cores temáticas |
+| `github-issue-autocomplete.ts` | Adiciona preenchimento automático para issues `#1234` empilhando um provedor de autocomplete customizado que pré-carrega issues abertas via `gh issue list` |
+| `widget-placement.ts` | Mostra widgets acima e abaixo do editor via `ctx.ui.setWidget()` |
+| `hidden-thinking-label.ts` | Customiza o rótulo de pensamento recolhido via `ctx.ui.setHiddenThinkingLabel()` |
+| `working-indicator.ts` | Customiza o indicador de trabalho contínuo via `ctx.ui.setWorkingIndicator()` |
+| `model-status.ts` | Mostra mudanças de modelo na barra de status via evento `model_select` |
+| `snake.ts` | Jogo da cobrinha com UI customizada, captura de teclado e persistência de sessão |
+| `tic-tac-toe.ts` | Jogo da velha contra o agente usando `executionMode: "sequential"` para evitar condições de corrida no estado compartilhado |
+| `send-user-message.ts` | Demonstra `pi.sendUserMessage()` para enviar mensagens de usuário a partir de extensões |
+| `timed-confirm.ts` | Demonstra AbortSignal para dispensar automaticamente caixas de diálogo `ctx.ui.confirm()` e `ctx.ui.select()` |
+| `rpc-demo.ts` | Exercita todos os métodos de UI de extensão suportados por RPC; par do [`examples/rpc-extension-ui.ts`](../rpc-extension-ui.ts) |
+| `modal-editor.ts` | Editor modal no estilo vim customizado via `ctx.ui.setEditorComponent()` |
+| `rainbow-editor.ts` | Efeito de texto arco-íris animado via editor customizado |
+| `notify.ts` | Notificações de desktop via OSC 777 quando o agente termina (Ghostty, iTerm2, WezTerm) |
+| `titlebar-spinner.ts` | Animação em Braille no título do terminal enquanto o agente está trabalhando |
+| `summarize.ts` | Resume a conversa com o GPT-5.2 e exibe numa UI transitória |
+| `custom-footer.ts` | Rodapé customizado com branch git e estatísticas de tokens via `ctx.ui.setFooter()` |
+| `custom-header.ts` | Cabeçalho customizado via `ctx.ui.setHeader()` |
+| `overlay-test.ts` | Testa a composição de overlay com inputs de texto inline e casos limite |
+| `overlay-qa-tests.ts` | Testes de QA extensivos de overlay: âncoras, margens, empilhamento, transbordamento, animação |
+| `doom-overlay/` | Jogo DOOM rodando como overlay a 35 FPS (demonstra renderização em tempo real) |
+| `shutdown-command.ts` | Adiciona o comando `/quit` demonstrando `ctx.shutdown()` |
+| `reload-runtime.ts` | Adiciona o comando `/reload-runtime` e a ferramenta `reload_runtime` mostrando o fluxo de recarregamento seguro |
+| `interactive-shell.ts` | Executa comandos interativos (vim, htop) com terminal completo via evento `user_bash` |
+| `inline-bash.ts` | Expande padrões `!{command}` nos prompts através da transformação do evento `input` |
+| `input-transform-streaming.ts` | Pula pré-processamento de input custoso para direcionamento mid-stream via `streamingBehavior` |
 
-### Git Integration
+### Integração Git
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `git-checkpoint.ts` | Creates git stash checkpoints at each turn for code restoration on fork |
-| `auto-commit-on-exit.ts` | Auto-commits on exit using last assistant message for commit message |
+| `git-checkpoint.ts` | Cria checkpoints no git stash em cada turno para restauração de código no fork |
+| `auto-commit-on-exit.ts` | Realiza commit automaticamente ao sair usando a última mensagem do assistente para a mensagem do commit |
 
-### System Prompt & Compaction
+### System Prompt & Compactação
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `pirate.ts` | Demonstrates `systemPromptAppend` to dynamically modify system prompt |
-| `claude-rules.ts` | Scans `.claude/rules/` folder and lists rules in system prompt |
-| `custom-compaction.ts` | Custom compaction that summarizes entire conversation |
-| `trigger-compact.ts` | Triggers compaction when context usage exceeds 100k tokens and adds `/trigger-compact` command |
+| `pirate.ts` | Demonstra `systemPromptAppend` para modificar o system prompt dinamicamente |
+| `claude-rules.ts` | Analisa a pasta `.claude/rules/` e lista as regras no system prompt |
+| `custom-compaction.ts` | Compactação customizada que resume a conversa inteira |
+| `trigger-compact.ts` | Aciona a compactação quando o uso de contexto excede 100k tokens e adiciona o comando `/trigger-compact` |
 
-### System Integration
+### Integração do Sistema
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `mac-system-theme.ts` | Syncs pi theme with macOS dark/light mode |
+| `mac-system-theme.ts` | Sincroniza o tema do pi com o modo dark/light do macOS |
 
-### Resources
+### Recursos (Resources)
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `dynamic-resources/` | Loads skills, prompts, and themes using `resources_discover` |
+| `dynamic-resources/` | Carrega skills, prompts e temas usando `resources_discover` |
 
-### Messages & Communication
+### Mensagens & Comunicação
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `message-renderer.ts` | Custom message rendering with colors and expandable details via `registerMessageRenderer` |
-| `entry-renderer.ts` | TUI-only session entry rendering via `appendEntry` and `registerEntryRenderer` |
-| `debug-provider.ts` | Toggle raw provider stream capture with `/debug-provider` and inspect each assistant message in a TUI-only session entry |
-| `event-bus.ts` | Inter-extension communication via `pi.events` |
+| `message-renderer.ts` | Renderização customizada de mensagens com cores e detalhes expansíveis via `registerMessageRenderer` |
+| `entry-renderer.ts` | Renderização exclusiva para TUI das entradas de sessão via `appendEntry` e `registerEntryRenderer` |
+| `debug-provider.ts` | Alterna a captura do stream bruto do provedor com `/debug-provider` e inspeciona cada mensagem do assistente na sessão TUI |
+| `event-bus.ts` | Comunicação entre extensões via `pi.events` |
 
-### Session Metadata
+### Metadados da Sessão
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `session-name.ts` | Name sessions for the session selector via `setSessionName` |
-| `bookmark.ts` | Bookmark entries with labels for `/tree` navigation via `setLabel` |
+| `session-name.ts` | Nomeia sessões no seletor de sessões via `setSessionName` |
+| `bookmark.ts` | Adiciona marcadores (bookmarks) a entradas para navegação `/tree` via `setLabel` |
 
-### Custom Providers
+### Provedores Customizados
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `custom-provider-anthropic/` | Custom Anthropic provider with OAuth support and custom streaming implementation |
-| `custom-provider-gitlab-duo/` | GitLab Duo provider using pi-ai's built-in Anthropic/OpenAI streaming via proxy |
-| `jev-router.ts` | Virtual model via `registerVirtualModel` that plans on Codex Sol or Terra (picked by the Jev classifier) and switches to Luna after the first edit |
+| `custom-provider-anthropic/` | Provedor Anthropic customizado com suporte a OAuth e implementação própria de streaming |
+| `custom-provider-gitlab-duo/` | Provedor GitLab Duo utilizando o streaming embutido OpenAI/Anthropic do pi-ai através de um proxy |
+| `jev-router.ts` | Modelo virtual via `registerVirtualModel` que planeja usando Codex Sol ou Terra (escolhidos pelo classificador Jev) e troca para Luna após a primeira edição |
 
-### External Dependencies
+### Dependências Externas
 
-| Extension | Description |
+| Extensão | Descrição |
 |-----------|-------------|
-| `with-deps/` | Extension with its own package.json and dependencies (demonstrates jiti module resolution) |
-| `file-trigger.ts` | Watches a trigger file and injects contents into conversation |
+| `with-deps/` | Extensão com seu próprio package.json e dependências (demonstra resolução de módulos jiti) |
+| `file-trigger.ts` | Monitora um arquivo e injeta seu conteúdo na conversa |
 
-## Writing Extensions
+## Escrevendo Extensões
 
-See [docs/extensions.md](../../docs/extensions.md) for full documentation.
+Veja [docs/extensions.md](../../docs/extensions.md) para a documentação completa.
 
 ```typescript
 import type { ExtensionAPI } from "@earendil-works/3pi-coding-agent";
@@ -181,9 +181,9 @@ export default function (pi: ExtensionAPI) {
 }
 ```
 
-## Key Patterns
+## Padrões Principais
 
-**Use StringEnum for string parameters** (required for Google API compatibility):
+**Use StringEnum para parâmetros em formato string** (necessário para compatibilidade com a API do Google):
 ```typescript
 import { StringEnum } from "@earendil-works/3pi-ai";
 
@@ -194,7 +194,7 @@ action: StringEnum(["list", "add"] as const)
 action: Type.Union([Type.Literal("list"), Type.Literal("add")])
 ```
 
-**State persistence via details:**
+**Persistência de estado através dos detalhes (details):**
 ```typescript
 // Store state in tool result details for proper forking support
 return {
