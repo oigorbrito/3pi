@@ -1,4 +1,4 @@
-# Evidence-Driven Repository Template
+# 3pi
 
 [English](README.md) | [Português (Brasil)](README.pt-BR.md)
 
