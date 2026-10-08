@@ -344,7 +344,7 @@ import {
 } from '@earendil-works/3pi-ai/providers/all';
 
 const model = getBuiltinModel('openai', 'gpt-4o-mini'); // typed Model<'openai-responses'>
-const radius = getBuiltinModel('radius', 'balanced');   // typed Model<$13pi-messages'>
+const radius = getBuiltinModel('radius', 'balanced');   // typed Model<"3pi-messages'>
 const flux = getBuiltinImageModel('openrouter', 'black-forest-labs/flux.2-pro');
 const jev = getBuiltinClassifierModel('typesafe', 'jev-latest');
 const providers = getBuiltinProviders();

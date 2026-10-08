@@ -71,7 +71,7 @@ describe("builtin providers", () => {
 			expect(list.every((m) => m.provider === provider.id)).toBe(true);
 		}
 		expect(getBuiltinModel("radius", "balanced")).toMatchObject({
-			api: $13pi-messages",
+			api: "3pi-messages",
 			provider: "radius",
 		});
 	});

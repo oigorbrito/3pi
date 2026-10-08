@@ -18,7 +18,7 @@ afterEach(async () => {
 });
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), $13pi-durable-generation-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-durable-generation-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }

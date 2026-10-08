@@ -53,7 +53,7 @@ function createSessionManager(options: { sessionFile?: string } = {}): SessionMa
 }
 
 function createTempFile(): string {
-	const dir = mkdtempSync(join(tmpdir(), $13pi-shutdown-resume-hint-"));
+	const dir = mkdtempSync(join(tmpdir(), "3pi-shutdown-resume-hint-"));
 	tempDirs.push(dir);
 	const file = join(dir, "session.jsonl");
 	writeFileSync(file, "\n");

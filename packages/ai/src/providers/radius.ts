@@ -19,17 +19,17 @@ export interface RadiusProviderOptions {
 }
 
 /** Radius gateway provider with a persisted, dynamically refreshed catalog. */
-export function radiusProvider(options: RadiusProviderOptions = {}): Provider<$13pi-messages"> {
+export function radiusProvider(options: RadiusProviderOptions = {}): Provider<"3pi-messages"> {
 	const id = options.id ?? "radius";
 	const name = options.name ?? "Radius";
 	const gateway = normalizeRadiusGatewayUrl(options.gateway ?? DEFAULT_RADIUS_GATEWAY);
-	const baselineModels: Model<$13pi-messages">[] =
+	const baselineModels: Model<"3pi-messages">[] =
 		gateway === normalizeRadiusGatewayUrl(DEFAULT_RADIUS_GATEWAY)
 			? Object.values(RADIUS_MODELS).map((model) => ({ ...model, provider: id }))
 			: [];
 	// Gateway catalog for this account. Radius org owners can disable models, so once known it replaces
 	// the shipped baseline instead of overlaying it. The baseline only covers the time before any catalog exists.
-	let dynamicModels: Model<$13pi-messages">[] | undefined;
+	let dynamicModels: Model<"3pi-messages">[] | undefined;
 	const streams = piMessagesApi();
 
 	return {
@@ -43,7 +43,7 @@ export function radiusProvider(options: RadiusProviderOptions = {}): Provider<$1
 		refreshModels: async (context) => {
 			const stored = context.stored;
 			if (stored) {
-				const restored = stored.models.filter((model) => model.provider === id) as Model<$13pi-messages">[];
+				const restored = stored.models.filter((model) => model.provider === id) as Model<"3pi-messages">[];
 				if (
 					!(await context.publish({
 						update: () => {

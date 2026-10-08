@@ -42,7 +42,7 @@ if (storageKind === "sqlite") {
 	location = join(tmpdir(), `pi-durable-json-${Date.now()}.sqlite`);
 	storage = await openNodeSqliteStorage(location);
 } else if (storageKind === "jsonl") {
-	location = await mkdtemp(join(tmpdir(), $13pi-durable-json-"));
+	location = await mkdtemp(join(tmpdir(), "3pi-durable-json-"));
 	storage = await openNodeJsonlStorage(location, context);
 } else if (storageKind === "memory") {
 	storage = new MemoryStorage();

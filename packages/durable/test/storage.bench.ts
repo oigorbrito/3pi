@@ -36,7 +36,7 @@ async function createFixture(backend: StorageBenchmarkBackend): Promise<Fixture>
 		fixtures.push(fixture);
 		return fixture;
 	}
-	const directory = await mkdtemp(join(tmpdir(), $13pi-durable-benchmark-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-durable-benchmark-"));
 	directories.push(directory);
 	if (backend === "sqlite") {
 		const path = join(directory, "storage.sqlite");

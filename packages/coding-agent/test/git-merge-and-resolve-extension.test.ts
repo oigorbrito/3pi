@@ -56,7 +56,7 @@ describe("git-merge-and-resolve example", () => {
 	});
 
 	function createTempDir() {
-		tempDir = mkdtempSync(join(tmpdir(), $13pi-merge-test-"));
+		tempDir = mkdtempSync(join(tmpdir(), "3pi-merge-test-"));
 		return tempDir;
 	}
 

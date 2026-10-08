@@ -317,7 +317,7 @@ describe("ownership", () => {
 	});
 
 	it("decides idle after reopen from owner edges it has to load first", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-ownership-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-ownership-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		let opened = await openHarness(await openNodeSqliteStorage(path));
@@ -355,7 +355,7 @@ describe("ownership", () => {
 		["an abort-marked owner", true, { status: "pending", checkpoint: { phase: "hold" } }],
 	] as const) {
 		it(`derives marks a crash left unapplied below ${label} at open`, async () => {
-			const directory = await mkdtemp(join(tmpdir(), $13pi-durable-ownership-"));
+			const directory = await mkdtemp(join(tmpdir(), "3pi-durable-ownership-"));
 			directories.add(directory);
 			const path = join(directory, "session.sqlite");
 			// Without a Harness, nothing derives marks: a cancelled owner with a live task below it.
@@ -408,7 +408,7 @@ describe("ownership", () => {
 	});
 
 	it("marks work admitted after reopen below a cancelled owner whose edge was not loaded", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-ownership-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-ownership-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		let opened = await openHarness(await openNodeSqliteStorage(path));
@@ -520,7 +520,7 @@ describe("ownership", () => {
 	});
 
 	it("retries marks found through an edge loaded after reopen when their commit is rejected", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-ownership-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-ownership-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		let opened = await openHarness(await openNodeSqliteStorage(path));
@@ -783,7 +783,7 @@ describe("owned conversations from tools and supervisors", () => {
 	});
 
 	it("aborts the children of a tool call that throws or is interrupted, while the run continues", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-tool-children-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-tool-children-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const children: TaskId[] = [];
@@ -843,7 +843,7 @@ describe("owned conversations from tools and supervisors", () => {
 	});
 
 	it("reruns a replay-safe subagent tool after a restart with the same child and submission", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-safe-subagent-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-safe-subagent-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const children: ConversationId[] = [];
@@ -898,7 +898,7 @@ describe("owned conversations from tools and supervisors", () => {
 	});
 
 	it("lets a background supervisor resubmit after a restart without submitting twice", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-supervisor-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-supervisor-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const Children = defineDoc<{ child?: ConversationId }>({

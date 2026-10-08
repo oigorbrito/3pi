@@ -626,7 +626,7 @@ Analyze GitHub issue(s): $ARGUMENTS`,
 describe("loadPromptTemplates - diagnostics", () => {
 	// Regression test for #9354.
 	test("reports invalid YAML frontmatter and keeps valid siblings", () => {
-		const testDir = mkdtempSync(join(tmpdir(), $13pi-test-prompts-invalid-"));
+		const testDir = mkdtempSync(join(tmpdir(), "3pi-test-prompts-invalid-"));
 		const invalidPromptPath = join(testDir, "invalid.md");
 		try {
 			writeFileSync(invalidPromptPath, "---\ndescription: Broken: unquoted colon\n---\nDo something.\n");

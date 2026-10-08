@@ -413,7 +413,7 @@ export function createEnvConformance(options: EnvConformanceOptions): readonly E
 
 		createCase("argv exec reports missing programs and empty argv as spawn errors", async (env) => {
 			assert.strictEqual(
-				errorCode(await env.exec([$13pi-durable-conformance-missing-program"], undefined, context)),
+				errorCode(await env.exec(["3pi-durable-conformance-missing-program"], undefined, context)),
 				"spawn_error",
 			);
 			assert.strictEqual(errorCode(await env.exec([], undefined, context)), "spawn_error");

@@ -52,7 +52,7 @@ const Timing = defineExtension({
 
 // ─── Host setup ─────────────────────────────────────────────────────────────
 
-const project = await mkdtemp(join(tmpdir(), $13pi-durable-venv-"));
+const project = await mkdtemp(join(tmpdir(), "3pi-durable-venv-"));
 await mkdir(join(project, ".venv/bin"), { recursive: true });
 await writeFile(join(project, ".venv/bin/activate"), `export VIRTUAL_ENV="${project}/.venv"\n`);
 

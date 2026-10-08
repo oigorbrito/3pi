@@ -57,7 +57,7 @@ function getDefaultAttributionHeaders(
 
 	if (isCloudflareModel(model)) {
 		return {
-			"User-Agent": $13pi-coding-agent",
+			"User-Agent": "3pi-coding-agent",
 		};
 	}
 

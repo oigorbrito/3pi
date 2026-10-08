@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 function runEntry(entry: string, experimental: boolean) {
-	const directory = mkdtempSync(join(tmpdir(), $13pi-cli-boundary-"));
+	const directory = mkdtempSync(join(tmpdir(), "3pi-cli-boundary-"));
 	tempDirs.push(directory);
 	return spawnSync(
 		process.execPath,

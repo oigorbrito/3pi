@@ -55,7 +55,7 @@ function modelTypeGroups(root, bytes) {
 
 /** Return why the catalog cannot hydrate this checkout, or undefined if it can. */
 function hydrationProblem(root, bytes) {
-	const directory = mkdtempSync(join(tmpdir(), $13pi-model-catalog-pin-"));
+	const directory = mkdtempSync(join(tmpdir(), "3pi-model-catalog-pin-"));
 	try {
 		const catalogPath = join(directory, "models.all.json");
 		writeFileSync(catalogPath, bytes);

@@ -10,7 +10,7 @@ describe("issue #8337 UTF-8 BOM parsing", () => {
 	let testDir: string;
 
 	beforeEach(() => {
-		testDir = mkdtempSync(join(tmpdir(), $13pi-8337-"));
+		testDir = mkdtempSync(join(tmpdir(), "3pi-8337-"));
 	});
 
 	afterEach(() => {

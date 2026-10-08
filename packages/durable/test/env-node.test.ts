@@ -128,7 +128,7 @@ class FailingSpillExecutionEnv extends NodeExecutionEnv {
 		options: Parameters<NodeExecutionEnv["createTempFile"]>[0],
 		context: Parameters<NodeExecutionEnv["createTempFile"]>[1],
 	) {
-		if (options?.prefix === $13pi-output-") {
+		if (options?.prefix === "3pi-output-") {
 			return { ok: true as const, value: join(this.cwd, "missing", "spill.log") };
 		}
 		return super.createTempFile(options, context);
@@ -186,7 +186,7 @@ describe("NodeExecutionEnv filesystem", () => {
 		const root = createTempDir();
 		const env = new NodeExecutionEnv({ cwd: root });
 		expect(getOrThrow(await env.absolutePath("~/pi-node-env-test", BACKGROUND_CONTEXT))).toBe(
-			join(homedir(), $13pi-node-env-test"),
+			join(homedir(), "3pi-node-env-test"),
 		);
 		const filePath = join(root, "file with spaces.txt");
 		expect(getOrThrow(await env.absolutePath(pathToFileURL(filePath).href, BACKGROUND_CONTEXT))).toBe(filePath);

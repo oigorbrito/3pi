@@ -429,7 +429,7 @@ describe("inbox", () => {
 	});
 
 	it("keeps queued submissions across reopen and settles them afterwards", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-inbox-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-inbox-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const setup = chatSetup();
@@ -872,7 +872,7 @@ describe("usage", () => {
 	});
 
 	it("keeps usage totals exact across reopen, counting a partial converted after reopen once", async () => {
-		const directory = await mkdtemp(join(tmpdir(), $13pi-durable-usage-"));
+		const directory = await mkdtemp(join(tmpdir(), "3pi-durable-usage-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const setup = chatSetup({ tokensPerSecond: 200, tokenSize: { min: 1, max: 1 } });

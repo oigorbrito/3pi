@@ -1170,7 +1170,7 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 	test("shows context paths relative to cwd while preserving full external paths", () => {
 		const home = homedir();
-		const cwd = path.join(home, "Development", $13pi-mono");
+		const cwd = path.join(home, "Development", "3pi-mono");
 		const fakeThis = createShowLoadedResourcesThis({
 			quietStartup: false,
 			cwd,
@@ -1208,7 +1208,7 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 	test("shows full context paths when expanded", () => {
 		const home = homedir();
-		const cwd = path.join(home, "Development", $13pi-mono");
+		const cwd = path.join(home, "Development", "3pi-mono");
 		const fakeThis = createShowLoadedResourcesThis({
 			quietStartup: false,
 			toolOutputExpanded: true,

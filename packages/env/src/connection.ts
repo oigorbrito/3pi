@@ -191,7 +191,7 @@ export class Connection {
 		if (options.session !== undefined) {
 			const current = this.#session;
 			if (current === undefined || current.id !== options.session || !current.live) {
-				throw lost($13pi-env connection lost");
+				throw lost("3pi-env connection lost");
 			}
 			return this.#send(current, op, json, options);
 		}
@@ -225,7 +225,7 @@ export class Connection {
 	}
 
 	#send(session: Session, op: string, json: Json, options: RequestOptions): Promise<Reply> {
-		if (!session.live) return Promise.reject(lost($13pi-env connection lost"));
+		if (!session.live) return Promise.reject(lost("3pi-env connection lost"));
 		const id = this.#nextId++;
 		return new Promise((resolve, reject) => {
 			const onAbort = () => this.#write(session, frame(CANCEL, id, {}));
@@ -282,13 +282,13 @@ export class Connection {
 		failed.catch(() => {});
 		child.stdout.on("data", (chunk: Buffer) => this.#onData(session, chunk));
 		child.stderr.on("data", (chunk: Buffer) => this.#options.onLog?.(chunk.toString("utf8")));
-		child.on("error", () => this.#teardown(session, lost($13pi-env connection lost")));
-		child.on("exit", () => this.#teardown(session, lost($13pi-env connection lost")));
+		child.on("error", () => this.#teardown(session, lost("3pi-env connection lost")));
+		child.on("exit", () => this.#teardown(session, lost("3pi-env connection lost")));
 		child.stdin.on("error", () => {});
 		session.timer = setInterval(() => {
 			this.#write(session, frame(PING, 0, {}));
 			if (Date.now() - session.lastSeen > SILENCE_LIMIT_MS) {
-				this.#teardown(session, lost($13pi-env connection timed out"));
+				this.#teardown(session, lost("3pi-env connection timed out"));
 			}
 		}, PING_INTERVAL_MS);
 		session.timer.unref();

@@ -40,7 +40,7 @@ describe("MCP config", () => {
 	});
 
 	function setup(global: unknown, project: unknown) {
-		const root = mkdtempSync(join(tmpdir(), $13pi-mcp-config-"));
+		const root = mkdtempSync(join(tmpdir(), "3pi-mcp-config-"));
 		dirs.push(root);
 		const agentDir = join(root, "agent");
 		const cwd = join(root, "project");
@@ -477,7 +477,7 @@ describe("MCP connections", () => {
 	it.skipIf(process.platform === "win32")(
 		"expands ~ in the command, arguments, and cwd of stdio servers",
 		async () => {
-			const home = mkdtempSync(join(tmpdir(), $13pi-mcp-home-"));
+			const home = mkdtempSync(join(tmpdir(), "3pi-mcp-home-"));
 			const previousHome = process.env.HOME;
 			process.env.HOME = home;
 			mkdirSync(join(home, "work"));
@@ -702,7 +702,7 @@ for await (const line of createInterface({ input: process.stdin })) {
 	});
 
 	it("appends server log messages to the log file", async () => {
-		const dir = mkdtempSync(join(tmpdir(), $13pi-mcp-log-"));
+		const dir = mkdtempSync(join(tmpdir(), "3pi-mcp-log-"));
 		try {
 			const path = join(dir, "mcp.log");
 			const { connection } = connect(

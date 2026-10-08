@@ -7,7 +7,7 @@ import { installConsumer } from "./local-package-install.mjs";
 import { produceArtifactSet } from "./package-artifacts.mjs";
 import { codingAgentName, smokeTestCodingAgent } from "./coding-agent-smoke.mjs";
 
-const devPackages = [$13pi-client", $13pi-protocol", $13pi-server"].map((name) => `@earendil-works/${name}`);
+const devPackages = ["3pi-client", "3pi-protocol", "3pi-server"].map((name) => `@earendil-works/${name}`);
 
 function writePackage(directory, manifest, files) {
 	mkdirSync(directory, { recursive: true });
@@ -19,7 +19,7 @@ function writePackage(directory, manifest, files) {
 }
 
 function createFixture(t, { importServer = false, declareServer = false } = {}) {
-	const temporaryRoot = mkdtempSync(join(tmpdir(), $13pi-coding-agent-smoke-test-"));
+	const temporaryRoot = mkdtempSync(join(tmpdir(), "3pi-coding-agent-smoke-test-"));
 	t.after(() => rmSync(temporaryRoot, { recursive: true, force: true }));
 	const root = join(temporaryRoot, "fixture with spaces");
 	const repoRoot = join(root, "repo");

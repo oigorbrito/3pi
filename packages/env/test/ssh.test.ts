@@ -70,7 +70,7 @@ async function waitForPort(port: number): Promise<void> {
 
 // A disposable sshd on localhost with its own host key, client key and home directory.
 describe.skipIf(sshd === undefined)("SSH bootstrap", () => {
-	const root = mkdtempSync(join(tmpdir(), $13pi-env-ssh-"));
+	const root = mkdtempSync(join(tmpdir(), "3pi-env-ssh-"));
 	const home = join(root, "home");
 	let server: ChildProcess | undefined;
 	let target: SshTarget;
@@ -105,7 +105,7 @@ describe.skipIf(sshd === undefined)("SSH bootstrap", () => {
 			user: userInfo().username,
 			identityFile: join(root, "client_key"),
 			knownHostsFile: join(root, "known_hosts"),
-			hostKeyAlias: $13pi-env-test",
+			hostKeyAlias: "3pi-env-test",
 			configFile: join(root, "ssh_config"),
 		};
 	});
@@ -133,10 +133,10 @@ describe.skipIf(sshd === undefined)("SSH bootstrap", () => {
 			const deployed = readFileSync(join(home, ".3pi/mobile/tools", deployedName));
 			expect(deployed.equals(readFileSync(daemon))).toBe(true);
 			// Daemons of other contents are removed.
-			expect(readdirSync(join(home, ".3pi/mobile/tools")).filter((name) => name.startsWith($13pi-env-"))).toEqual([
+			expect(readdirSync(join(home, ".3pi/mobile/tools")).filter((name) => name.startsWith("3pi-env-"))).toEqual([
 				deployedName,
 			]);
-			const env = new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd: home });
+			const env = new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd: home });
 			getOrThrow(await env.writeFile("over-ssh.txt", "hello", context));
 			expect(getOrThrow(await env.readTextFile("over-ssh.txt", context))).toBe("hello");
 			const output: string[] = [];
@@ -190,7 +190,7 @@ describe.skipIf(sshd === undefined)("SSH bootstrap", () => {
 		const login = async (loginShell: boolean) => {
 			const { connection } = await connectSsh({ ...target, binary: daemon, loginShell });
 			try {
-				const env = new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd: home });
+				const env = new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd: home });
 				const output: string[] = [];
 				getOrThrow(
 					await env.exec(
@@ -213,7 +213,7 @@ describe.skipIf(sshd === undefined)("SSH bootstrap", () => {
 		const { connection, remote } = sshConnection({ ...lazyTarget, binary: daemon });
 		try {
 			expect(remote()).toBeUndefined();
-			const env = new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd: home });
+			const env = new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd: home });
 			// Nothing is trusted yet: each operation fails with the reason and tries again.
 			const read = await env.readTextFile("missing.txt", context);
 			expect(read.ok ? "ok" : read.error.message).toMatch(/not trusted/);

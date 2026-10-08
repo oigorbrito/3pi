@@ -46,7 +46,7 @@ const typed = "types=chat,image,classifier";
 
 let root;
 beforeEach(() => {
-	root = mkdtempSync(join(tmpdir(), $13pi-catalog-pin-"));
+	root = mkdtempSync(join(tmpdir(), "3pi-catalog-pin-"));
 	mkdirSync(join(root, "packages/coding-agent"), { recursive: true });
 	mkdirSync(join(root, "packages/ai/src/providers"), { recursive: true });
 	mkdirSync(join(root, "nix"));

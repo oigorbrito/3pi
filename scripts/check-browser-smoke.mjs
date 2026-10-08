@@ -3,10 +3,10 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { build } from "esbuild";
 
-const outputPath = join(tmpdir(), $13pi-browser-smoke.js");
-const durableOutputPath = join(tmpdir(), $13pi-durable-browser-smoke.js");
-const agentTreeshakeOutputPath = join(tmpdir(), $13pi-agent-treeshake-smoke.js");
-const errorLogPath = join(tmpdir(), $13pi-browser-smoke-errors.log");
+const outputPath = join(tmpdir(), "3pi-browser-smoke.js");
+const durableOutputPath = join(tmpdir(), "3pi-durable-browser-smoke.js");
+const agentTreeshakeOutputPath = join(tmpdir(), "3pi-agent-treeshake-smoke.js");
+const errorLogPath = join(tmpdir(), "3pi-browser-smoke-errors.log");
 const generatedCatalogDataDir = join(process.cwd(), "packages/ai/src/providers/data");
 
 // Fresh checkouts do not materialize provider JSON until model data is hydrated.

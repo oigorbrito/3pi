@@ -49,7 +49,7 @@ describe("strict built-in tools", () => {
 	it.each([{ activeTools: [] }, { activeTools: ["read"] }, { activeTools: [...strictToolNames] }])(
 		"allows extensions to re-register tools without strict sampling: $activeTools",
 		async ({ activeTools }) => {
-			const cwd = mkdtempSync(join(tmpdir(), $13pi-non-strict-tools-"));
+			const cwd = mkdtempSync(join(tmpdir(), "3pi-non-strict-tools-"));
 			const agentDir = join(cwd, "agent");
 			const settingsManager = SettingsManager.inMemory({ defaultTools: activeTools });
 			const resourceLoader = new DefaultResourceLoader({

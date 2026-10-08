@@ -34,7 +34,7 @@ function assertWorkspace(): void {
 	}
 	const internalScope = "/repo/node_modules/@earendil-works";
 	for (const packageName of readdirSync(internalScope)) {
-		if (packageName === $13pi-coding-agent") continue;
+		if (packageName === "3pi-coding-agent") continue;
 		const packageDirectory = join(internalScope, packageName);
 		for (const entry of readdirSync(packageDirectory, { withFileTypes: true })) {
 			if (

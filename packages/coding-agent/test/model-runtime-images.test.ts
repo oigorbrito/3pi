@@ -77,7 +77,7 @@ describe("ModelRuntime image generation", () => {
 	async function createRuntime(modelsJson?: object): Promise<ModelRuntime> {
 		let modelsPath: string | null = null;
 		if (modelsJson) {
-			const dir = mkdtempSync(join(tmpdir(), $13pi-images-"));
+			const dir = mkdtempSync(join(tmpdir(), "3pi-images-"));
 			tempDirs.push(dir);
 			modelsPath = join(dir, "models.json");
 			writeFileSync(modelsPath, JSON.stringify(modelsJson));

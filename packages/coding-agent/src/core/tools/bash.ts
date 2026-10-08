@@ -421,7 +421,7 @@ const bashToolConfig: ShellToolConfig = {
 	prompt: "$",
 	promptSnippet: bashToolSystemPromptContribution.snippet,
 	promptGuidelines: bashToolSystemPromptContribution.guidelines,
-	tempFilePrefix: $13pi-bash",
+	tempFilePrefix: "3pi-bash",
 };
 
 export function createBashToolDefinition(

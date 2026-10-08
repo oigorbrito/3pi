@@ -1410,7 +1410,7 @@ Content`,
 
 			expect(pathEndsWith(installPath, "node_modules/left-pad")).toBe(true);
 			expect(relative(tempRoot, installPath).startsWith("..")).toBe(false);
-			expect(installPath.startsWith(join(tmpdir(), $13pi-extensions"))).toBe(false);
+			expect(installPath.startsWith(join(tmpdir(), "3pi-extensions"))).toBe(false);
 			if (process.platform !== "win32") {
 				expect(statSync(tempRoot).mode & 0o777).toBe(0o700);
 			}
@@ -1947,9 +1947,9 @@ Content`,
 		});
 
 		it("should resolve autoload-disabled project package entries as deltas over global packages", async () => {
-			const pkgDir = join(agentDir, "npm", "node_modules", $13pi-tools");
+			const pkgDir = join(agentDir, "npm", "node_modules", "3pi-tools");
 			mkdirSync(join(pkgDir, "extensions"), { recursive: true });
-			writeFileSync(join(pkgDir, "package.json"), JSON.stringify({ name: $13pi-tools", version: "1.0.0" }));
+			writeFileSync(join(pkgDir, "package.json"), JSON.stringify({ name: "3pi-tools", version: "1.0.0" }));
 			writeFileSync(join(pkgDir, "extensions", "foo.ts"), "export default function() {}");
 			writeFileSync(join(pkgDir, "extensions", "bar.ts"), "export default function() {}");
 			settingsManager.setPackages(["npm:pi-tools"]);

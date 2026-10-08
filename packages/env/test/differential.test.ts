@@ -22,12 +22,12 @@ afterAll(() => {
 });
 
 function pair(): { local: ExecutionEnv; remote: ExecutionEnv; roots: [string, string] } {
-	const localRoot = mkdtempSync(join(tmpdir(), $13pi-env-local-"));
-	const remoteRoot = mkdtempSync(join(tmpdir(), $13pi-env-remote-"));
+	const localRoot = mkdtempSync(join(tmpdir(), "3pi-env-local-"));
+	const remoteRoot = mkdtempSync(join(tmpdir(), "3pi-env-remote-"));
 	dirs.push(localRoot, remoteRoot);
 	return {
 		local: new NodeExecutionEnv({ cwd: localRoot }),
-		remote: new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd: remoteRoot }),
+		remote: new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd: remoteRoot }),
 		roots: [localRoot, remoteRoot],
 	};
 }

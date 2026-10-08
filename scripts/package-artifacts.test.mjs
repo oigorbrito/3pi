@@ -16,7 +16,7 @@ function writePackage(directory, manifest, files) {
 }
 
 test("produces a verified, content-addressed artifact set", (t) => {
-	const temporaryRoot = mkdtempSync(join(tmpdir(), $13pi-package-artifacts-test-"));
+	const temporaryRoot = mkdtempSync(join(tmpdir(), "3pi-package-artifacts-test-"));
 	t.after(() => rmSync(temporaryRoot, { recursive: true, force: true }));
 	const repoRoot = join(temporaryRoot, "repo with spaces");
 	mkdirSync(repoRoot);

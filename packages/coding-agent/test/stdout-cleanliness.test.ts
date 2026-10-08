@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-	const dir = mkdtempSync(join(tmpdir(), $13pi-stdout-clean-"));
+	const dir = mkdtempSync(join(tmpdir(), "3pi-stdout-clean-"));
 	tempDirs.push(dir);
 	return dir;
 }

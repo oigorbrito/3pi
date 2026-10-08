@@ -1338,7 +1338,7 @@ async function fetchOpenRouterModels(): Promise<OpenRouterCatalog> {
 	}
 }
 
-async function fetchRadiusModels(): Promise<Model<$13pi-messages">[]> {
+async function fetchRadiusModels(): Promise<Model<"3pi-messages">[]> {
 	try {
 		console.log("Fetching models from Radius API...");
 		const config = await loadRadiusGatewayConfig(DEFAULT_RADIUS_GATEWAY);

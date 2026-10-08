@@ -24,7 +24,7 @@ import { openNodeJsonlStorage } from "../../src/storage/jsonl/node.ts";
 import { type BashToolInput, CodingTools } from "../../src/tools/index.ts";
 
 const context = BACKGROUND_CONTEXT;
-const directory = await mkdtemp(join(tmpdir(), $13pi-durable-example-"));
+const directory = await mkdtemp(join(tmpdir(), "3pi-durable-example-"));
 await writeFile(join(directory, "notes.txt"), "hello world\n");
 
 // The faux provider plays the model: four tool-calling answers, then a final answer.

@@ -120,7 +120,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let outsideDir = "";
 
 		beforeEach(() => {
-			rootDir = mkdtempSync(join(tmpdir(), $13pi-autocomplete-root-"));
+			rootDir = mkdtempSync(join(tmpdir(), "3pi-autocomplete-root-"));
 			baseDir = join(rootDir, "cwd");
 			outsideDir = join(rootDir, "outside");
 			mkdirSync(baseDir, { recursive: true });
@@ -556,7 +556,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let baseDir = "";
 
 		beforeEach(() => {
-			baseDir = mkdtempSync(join(tmpdir(), $13pi-autocomplete-"));
+			baseDir = mkdtempSync(join(tmpdir(), "3pi-autocomplete-"));
 		});
 
 		afterEach(() => {
@@ -749,7 +749,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let baseDir = "";
 
 		beforeEach(() => {
-			baseDir = mkdtempSync(join(tmpdir(), $13pi-autocomplete-"));
+			baseDir = mkdtempSync(join(tmpdir(), "3pi-autocomplete-"));
 		});
 
 		afterEach(() => {

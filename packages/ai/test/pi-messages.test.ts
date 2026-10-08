@@ -66,11 +66,11 @@ async function startServer(options: ResponderOptions): Promise<{ baseUrl: string
 	return { baseUrl: `http://127.0.0.1:${address.port}/v1`, requests };
 }
 
-function createModel(baseUrl: string): Model<$13pi-messages"> {
+function createModel(baseUrl: string): Model<"3pi-messages"> {
 	return {
 		id: "auto",
 		name: "Radius Auto",
-		api: $13pi-messages",
+		api: "3pi-messages",
 		provider: "radius",
 		baseUrl,
 		reasoning: false,
@@ -94,7 +94,7 @@ const usage = {
 	cost: { input: 0.1, output: 0.2, cacheRead: 0, cacheWrite: 0, total: 0.3 },
 };
 
-describe($13pi-messages", () => {
+describe("3pi-messages", () => {
 	it("streams text and tool calls and resolves the terminal message", async () => {
 		const { baseUrl, requests } = await startServer({
 			events: [
@@ -271,14 +271,14 @@ describe($13pi-messages", () => {
 	});
 });
 
-describe($13pi-messages api registration", () => {
+describe("3pi-messages api registration", () => {
 	it("is registered as a builtin api provider", async () => {
 		const { getApiProvider } = await import("../src/compat.ts");
-		expect(getApiProvider($13pi-messages")).toBeDefined();
+		expect(getApiProvider("3pi-messages")).toBeDefined();
 	});
 
 	it("is a known api usable on models", () => {
-		const api: Api = $13pi-messages";
-		expect(api).toBe($13pi-messages");
+		const api: Api = "3pi-messages";
+		expect(api).toBe("3pi-messages");
 	});
 });
