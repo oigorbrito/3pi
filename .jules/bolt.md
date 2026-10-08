@@ -1,0 +1,3 @@
+## 2025-05-18 - Memoizing Model Catalogs and Linear Header Merging
+**Learning:** In LLM provider implementations (`createProvider`), `getModels()` / `getAllModels()` and `mergeHeaders()` are hot paths called repeatedly during model selection, auth resolution, and request preparation. Computing array merges with `findIndex` or header overrides with nested `Object.keys()` scans causes $O(N \cdot M)$ allocations and lowercasing per request.
+**Action:** Memoize merged model catalog arrays until dynamic models are updated, and use a `Map` tracking lowercased keys for case-insensitive header merging in $O(N + M)$ time.

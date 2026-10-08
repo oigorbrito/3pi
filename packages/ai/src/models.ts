@@ -376,14 +376,29 @@ function mergeHeaders(
 	override: ProviderHeaders | undefined,
 ): ProviderHeaders | undefined {
 	if (!base && !override) return undefined;
-	const merged = { ...base };
-	for (const [name, value] of Object.entries(override ?? {})) {
+	if (!override) return { ...base };
+	if (!base) return { ...override };
+
+	// Performance optimization: Avoid quadratic nested loop and repeated lowercasing
+	// by tracking header names case-insensitively using a Map.
+	const merged: ProviderHeaders = {};
+	const lowerNames = new Map<string, string>();
+
+	for (const [name, value] of Object.entries(base)) {
+		merged[name] = value;
+		lowerNames.set(name.toLowerCase(), name);
+	}
+
+	for (const [name, value] of Object.entries(override)) {
 		const lowerName = name.toLowerCase();
-		for (const existingName of Object.keys(merged)) {
-			if (existingName.toLowerCase() === lowerName) delete merged[existingName];
+		const existingName = lowerNames.get(lowerName);
+		if (existingName && existingName !== name) {
+			delete merged[existingName];
 		}
 		merged[name] = value;
+		lowerNames.set(lowerName, name);
 	}
+
 	return merged;
 }
 
@@ -1055,17 +1070,40 @@ export function createProvider<TApi extends Api = Api>(input: CreateProviderOpti
 
 	const baselineModels = input.models;
 	let dynamicModels: readonly ProviderModel<TApi>[] = [];
+	let cachedModels: readonly ProviderModel<TApi>[] | undefined;
 	const fetchModels = input.fetchModels;
+
+	// Performance optimization: Memoize merged model lists and use Map index
+	// for linear merge instead of quadratic search on every getModels call.
 	const currentModels = (): readonly ProviderModel<TApi>[] => {
-		const merged = [...baselineModels];
-		for (const model of dynamicModels) {
-			const index = merged.findIndex(
-				(entry) => getModelType(entry) === getModelType(model) && entry.id === model.id,
-			);
-			if (index >= 0) merged[index] = model;
-			else merged.push(model);
+		if (cachedModels) return cachedModels;
+		if (dynamicModels.length === 0) {
+			cachedModels = baselineModels;
+			return cachedModels;
 		}
-		return merged;
+
+		const indexMap = new Map<string, number>();
+		const merged: ProviderModel<TApi>[] = [];
+
+		for (const model of baselineModels) {
+			const key = `${getModelType(model)}:${model.id}`;
+			indexMap.set(key, merged.length);
+			merged.push(model);
+		}
+
+		for (const model of dynamicModels) {
+			const key = `${getModelType(model)}:${model.id}`;
+			const index = indexMap.get(key);
+			if (index !== undefined) {
+				merged[index] = model;
+			} else {
+				indexMap.set(key, merged.length);
+				merged.push(model);
+			}
+		}
+
+		cachedModels = merged;
+		return cachedModels;
 	};
 	const apiFor = (model: Model<Api>): ProviderStreams | undefined => single ?? byApi?.[model.api];
 
@@ -1100,6 +1138,7 @@ export function createProvider<TApi extends Api = Api>(input: CreateProviderOpti
 							!(await context.publish({
 								update: () => {
 									dynamicModels = restored;
+									cachedModels = undefined;
 								},
 							}))
 						) {
@@ -1114,6 +1153,7 @@ export function createProvider<TApi extends Api = Api>(input: CreateProviderOpti
 						persist: { models: refreshed, checkedAt: Date.now() },
 						update: () => {
 							dynamicModels = refreshed;
+							cachedModels = undefined;
 						},
 					});
 				}
