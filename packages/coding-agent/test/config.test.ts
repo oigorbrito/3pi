@@ -50,11 +50,11 @@ afterEach(() => {
 	}
 });
 
-function createNpmPrefixInstall(template = $13pi-prefix-"): { prefix: string; packageDir: string } {
+function createNpmPrefixInstall(template = "3pi-prefix-"): { prefix: string; packageDir: string } {
 	const prefix = mkdtempSync(join(tmpdir(), template));
 	const root = join(prefix, "lib", "node_modules");
 	const scopeDir = join(root, "@earendil-works");
-	const packageDir = join(scopeDir, $13pi-coding-agent");
+	const packageDir = join(scopeDir, "3pi-coding-agent");
 	mkdirSync(packageDir, { recursive: true });
 	tempDir = prefix;
 	process.env.PI_PACKAGE_DIR = packageDir;
@@ -63,10 +63,10 @@ function createNpmPrefixInstall(template = $13pi-prefix-"): { prefix: string; pa
 }
 
 function createPnpmGlobalInstall(): { root: string; packageDir: string } {
-	const temp = mkdtempSync(join(tmpdir(), $13pi-pnpm-"));
+	const temp = mkdtempSync(join(tmpdir(), "3pi-pnpm-"));
 	const binDir = join(temp, "bin");
 	const root = join(temp, "pnpm", "global", "5", "node_modules");
-	const packageDir = join(root, "@mariozechner", $13pi-coding-agent");
+	const packageDir = join(root, "@mariozechner", "3pi-coding-agent");
 	mkdirSync(packageDir, { recursive: true });
 	mkdirSync(binDir, { recursive: true });
 	writeFileSync(join(binDir, process.platform === "win32" ? "pnpm.cmd" : "pnpm"), createFakePnpmScript(root));
@@ -81,7 +81,7 @@ function createPnpmGlobalInstall(): { root: string; packageDir: string } {
 			"@mariozechner+pi-coding-agent@0.0.0",
 			"node_modules",
 			"@mariozechner",
-			$13pi-coding-agent",
+			"3pi-coding-agent",
 			"dist",
 			"cli.js",
 		),
@@ -90,10 +90,10 @@ function createPnpmGlobalInstall(): { root: string; packageDir: string } {
 }
 
 function createYarnGlobalInstall(): { globalDir: string; packageDir: string } {
-	const temp = mkdtempSync(join(tmpdir(), $13pi-yarn-"));
+	const temp = mkdtempSync(join(tmpdir(), "3pi-yarn-"));
 	const binDir = join(temp, "bin");
 	const globalDir = join(temp, "yarn", "global");
-	const packageDir = join(globalDir, "node_modules", "@mariozechner", $13pi-coding-agent");
+	const packageDir = join(globalDir, "node_modules", "@mariozechner", "3pi-coding-agent");
 	mkdirSync(packageDir, { recursive: true });
 	mkdirSync(binDir, { recursive: true });
 	writeFileSync(join(binDir, process.platform === "win32" ? "yarn.cmd" : "yarn"), createFakeYarnScript(globalDir));
@@ -101,17 +101,17 @@ function createYarnGlobalInstall(): { globalDir: string; packageDir: string } {
 	tempDir = temp;
 	process.env.PATH = `${binDir}${delimiter}${originalPath ?? ""}`;
 	process.env.PI_PACKAGE_DIR = packageDir;
-	setExecPath(join(globalDir, ".yarn", "@mariozechner", $13pi-coding-agent", "dist", "cli.js"));
+	setExecPath(join(globalDir, ".yarn", "@mariozechner", "3pi-coding-agent", "dist", "cli.js"));
 	return { globalDir, packageDir };
 }
 
 function createBunGlobalInstall(): { packageDir: string } {
-	const temp = mkdtempSync(join(tmpdir(), $13pi-bun-"));
+	const temp = mkdtempSync(join(tmpdir(), "3pi-bun-"));
 	const prefix = join(temp, ".bun");
 	const bunBin = join(prefix, "bin");
 	const root = join(prefix, "install", "global", "node_modules");
 	const scopeDir = join(root, "@earendil-works");
-	const packageDir = join(scopeDir, $13pi-coding-agent");
+	const packageDir = join(scopeDir, "3pi-coding-agent");
 	mkdirSync(packageDir, { recursive: true });
 	mkdirSync(bunBin, { recursive: true });
 	writeFileSync(join(bunBin, process.platform === "win32" ? "bun.cmd" : "bun"), createFakeBunScript(bunBin));
@@ -149,7 +149,7 @@ function createFakeBunScript(bunBin: string): string {
 
 describe("findNodePackageDir", () => {
 	test("skips binary metadata copied into dist", () => {
-		tempDir = mkdtempSync(join(tmpdir(), $13pi-package-dir-"));
+		tempDir = mkdtempSync(join(tmpdir(), "3pi-package-dir-"));
 		const distDir = join(tempDir, "dist");
 		const bundleDir = join(distDir, "bundle");
 		mkdirSync(bundleDir, { recursive: true });
@@ -347,11 +347,11 @@ describe("detectInstallMethod", () => {
 	});
 
 	test("self-updates pnpm v11 global installs resolved through the store", () => {
-		const temp = mkdtempSync(join(tmpdir(), $13pi-pnpm11-"));
+		const temp = mkdtempSync(join(tmpdir(), "3pi-pnpm11-"));
 		const binDir = join(temp, "bin");
 		const root = join(temp, "Library", "pnpm", "global", "v11");
 		const packageName = "@earendil-works/3pi-coding-agent";
-		const globalPackageDir = join(root, "11e9a", "node_modules", "@earendil-works", $13pi-coding-agent");
+		const globalPackageDir = join(root, "11e9a", "node_modules", "@earendil-works", "3pi-coding-agent");
 		const storePackageDir = join(
 			temp,
 			"Library",
@@ -360,12 +360,12 @@ describe("detectInstallMethod", () => {
 			"v11",
 			"links",
 			"@earendil-works",
-			$13pi-coding-agent",
+			"3pi-coding-agent",
 			"0.75.0",
 			"hash",
 			"node_modules",
 			"@earendil-works",
-			$13pi-coding-agent",
+			"3pi-coding-agent",
 		);
 		mkdirSync(globalPackageDir, { recursive: true });
 		mkdirSync(storePackageDir, { recursive: true });
@@ -454,7 +454,7 @@ describe("detectInstallMethod", () => {
 describe("detectInstallChange", () => {
 	// Regression test for #10439: a deleted pnpm install must not fall back to a package.json further up.
 	test("reports a removed install instead of reading a package.json further up", () => {
-		tempDir = mkdtempSync(join(tmpdir(), $13pi-install-change-"));
+		tempDir = mkdtempSync(join(tmpdir(), "3pi-install-change-"));
 		const installDir = join(tempDir, "global", "hash");
 		mkdirSync(installDir, { recursive: true });
 		writeFileSync(join(tempDir, "package.json"), JSON.stringify({ version: "0.0.1" }));

@@ -17,11 +17,11 @@ afterAll(() => {
 });
 
 function environment(): { env: RemoteExecutionEnv; connection: Connection } {
-	const cwd = mkdtempSync(join(tmpdir(), $13pi-env-remote-"));
+	const cwd = mkdtempSync(join(tmpdir(), "3pi-env-remote-"));
 	dirs.push(cwd);
 	const connection = new Connection({ command: [daemon] });
 	connections.push(connection);
-	return { env: new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd }), connection };
+	return { env: new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd }), connection };
 }
 
 describe("RemoteExecutionEnv", () => {
@@ -97,7 +97,7 @@ describe("RemoteExecutionEnv", () => {
 	});
 
 	it("computes the command at each start and retries a start that failed", async () => {
-		const cwd = mkdtempSync(join(tmpdir(), $13pi-env-remote-"));
+		const cwd = mkdtempSync(join(tmpdir(), "3pi-env-remote-"));
 		dirs.push(cwd);
 		let starts = 0;
 		const connection = new Connection({
@@ -108,7 +108,7 @@ describe("RemoteExecutionEnv", () => {
 			},
 		});
 		connections.push(connection);
-		const env = new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd });
+		const env = new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd });
 		const offline = await env.readTextFile("missing.txt", context);
 		expect(offline.ok ? "ok" : [offline.error.code, offline.error.message]).toEqual([
 			"unknown",

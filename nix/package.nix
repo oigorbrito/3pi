@@ -23,14 +23,14 @@ let
   installLock = source + "/packages/coding-agent/install-lock";
   modelCatalogPin = lib.importJSON ./model-catalog.json;
   modelCatalog = fetchurl {
-    name = $13pi-model-catalog.json";
+    name = "3pi-model-catalog.json";
     # The typed catalog is the representation whose bytes the revision hashes.
     url = "https://pi.dev/api/models/revisions/${modelCatalogPin.revision}?types=chat,image,classifier";
     sha256 = lib.removePrefix "sha256-" modelCatalogPin.revision;
   };
 
   workspacePackages = stdenv.mkDerivation {
-    pname = $13pi-workspace-packages";
+    pname = "3pi-workspace-packages";
     inherit (packageJson) version;
     src = source;
 

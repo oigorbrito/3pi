@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-	const dir = mkdtempSync(join(tmpdir(), $13pi-startup-session-name-"));
+	const dir = mkdtempSync(join(tmpdir(), "3pi-startup-session-name-"));
 	tempDirs.push(dir);
 	return dir;
 }

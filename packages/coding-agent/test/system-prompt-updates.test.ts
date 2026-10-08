@@ -54,7 +54,7 @@ describe("system prompt updates", () => {
 	});
 
 	test("opens a transcript without a system message and declares the prompt on the first request", async () => {
-		const tempDir = mkdtempSync(join(tmpdir(), $13pi-system-prompt-migration-"));
+		const tempDir = mkdtempSync(join(tmpdir(), "3pi-system-prompt-migration-"));
 		try {
 			const sessionManager = SessionManager.inMemory(tempDir);
 			sessionManager.appendMessage({ role: "user", content: "existing", timestamp: 1 });

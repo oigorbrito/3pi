@@ -54,7 +54,7 @@ async function main() {
 		throw new Error("Usage: node scripts/smoke-test-codemode-binary.mjs <pi-binary>");
 	}
 	const binary = resolve(binaryArg);
-	const tempDir = await mkdtemp(join(tmpdir(), $13pi-codemode-binary-smoke-"));
+	const tempDir = await mkdtemp(join(tmpdir(), "3pi-codemode-binary-smoke-"));
 	let requestCount = 0;
 	const server = createServer(async (request, response) => {
 		if (request.method !== "POST" || !request.url?.endsWith("/chat/completions")) {

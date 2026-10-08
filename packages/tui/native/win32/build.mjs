@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const sourceFile = path.join(scriptDir, "src", "win32-platform.c");
-const temporaryDir = mkdtempSync(path.join(tmpdir(), $13pi-tui-win32-"));
+const temporaryDir = mkdtempSync(path.join(tmpdir(), "3pi-tui-win32-"));
 
 const targets = [
 	{

@@ -68,7 +68,7 @@ let tempDir: string;
 let federationEnv: Record<string, string>;
 
 beforeAll(() => {
-	tempDir = mkdtempSync(join(tmpdir(), $13pi-anthropic-federation-"));
+	tempDir = mkdtempSync(join(tmpdir(), "3pi-anthropic-federation-"));
 	const identityTokenFile = join(tempDir, "identity.jwt");
 	writeFileSync(identityTokenFile, "header.payload.signature");
 	federationEnv = {

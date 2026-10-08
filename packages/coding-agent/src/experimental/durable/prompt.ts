@@ -67,7 +67,7 @@ export function createPiPrompt(settings: SettingsManager, fallbackCwd: string) {
 		});
 	};
 	return defineExtension({
-		name: $13pi-prompt",
+		name: "3pi-prompt",
 		// The built sections carry their own tags.
 		sections: KEYS.map((key) => section(key, (input) => build(input)[key], { tag: false })),
 	});

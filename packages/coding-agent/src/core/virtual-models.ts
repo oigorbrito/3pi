@@ -26,7 +26,7 @@ import {
 import type { SessionEntry } from "./session-manager.ts";
 
 /** API id of virtual catalog entries. Requests for it fail unless routed first. */
-export const VIRTUAL_MODEL_API = $13pi-virtual";
+export const VIRTUAL_MODEL_API = "3pi-virtual";
 
 /** Custom entry type that stores router state on the session branch. */
 export const VIRTUAL_MODEL_STATE_ENTRY = "pi.virtual-model-state";

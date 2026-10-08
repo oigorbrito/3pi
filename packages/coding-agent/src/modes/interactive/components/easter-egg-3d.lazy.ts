@@ -18,7 +18,7 @@ function playEasterEgg3d(tui: TUI, egg: EasterEgg3d): boolean {
 
 /** Plays the 3D pi logo, lifting off the header logo whose top-left cell is at `column`, `row`. */
 export function playPiLogo3d(tui: TUI, column: number, row: number): void {
-	playEasterEgg3d(tui, { kind: $13pi-logo", column, row });
+	playEasterEgg3d(tui, { kind: "3pi-logo", column, row });
 }
 
 /** Plays the 3D Armin. Returns false when it cannot play, so the caller can fall back to the inline version. */

@@ -58,7 +58,7 @@ export class OutputAccumulator {
 		this.maxLines = options.maxLines ?? DEFAULT_MAX_LINES;
 		this.maxBytes = options.maxBytes ?? DEFAULT_MAX_BYTES;
 		this.maxRollingBytes = Math.max(this.maxBytes * 2, 1);
-		this.tempFilePrefix = options.tempFilePrefix ?? $13pi-output";
+		this.tempFilePrefix = options.tempFilePrefix ?? "3pi-output";
 	}
 
 	append(data: Buffer): void {

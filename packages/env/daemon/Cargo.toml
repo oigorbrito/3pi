@@ -1,5 +1,5 @@
 [package]
-name = $13pi-env"
+name = "3pi-env"
 version = "0.1.0"
 edition = "2024"
 description = "Remote execution environment daemon for Pi Durable"

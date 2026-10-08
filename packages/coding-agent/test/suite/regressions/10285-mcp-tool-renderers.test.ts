@@ -37,7 +37,7 @@ describe("MCP tool renderers", () => {
 
 	it("renders them in HTML exports too", async () => {
 		initTheme("dark");
-		const dir = mkdtempSync(join(tmpdir(), $13pi-10285-"));
+		const dir = mkdtempSync(join(tmpdir(), "3pi-10285-"));
 		const sessionManager = SessionManager.create(dir, join(dir, "sessions"));
 		const harness = await createHarness({ extensionFactories: [mcpExtension], sessionManager });
 		try {

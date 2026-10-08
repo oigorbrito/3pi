@@ -36,7 +36,7 @@ const SecondPluginService = defineService<{ read(context: Context): Promise<stri
 let agentDir: string;
 
 beforeEach(async () => {
-	agentDir = await mkdtemp(join("/tmp", $13pi-experimental-agent-"));
+	agentDir = await mkdtemp(join("/tmp", "3pi-experimental-agent-"));
 	directories.add(agentDir);
 	await configureExperimentalWorkerModel(agentDir);
 	vi.stubEnv("PI_CODING_AGENT_DIR", agentDir);
@@ -83,7 +83,7 @@ afterEach(async () => {
 
 describe("experimental durable server composition", () => {
 	test("uses PI_SERVER_DIR and PI_SERVER_ID", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-server-dir-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-server-dir-"));
 		directories.add(directory);
 		const serverId = "00000000-0000-4000-8000-000000000001";
 		vi.stubEnv("PI_SERVER_DIR", directory);
@@ -165,7 +165,7 @@ describe("experimental durable server composition", () => {
 	});
 
 	test("serializes concurrent cold activation and retires after both clients leave", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-auto-server-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-auto-server-"));
 		directories.add(directory);
 		const serverId = "00000000-0000-4000-8000-000000000001";
 		vi.stubEnv("PI_SERVER_DIR", directory);
@@ -194,7 +194,7 @@ describe("experimental durable server composition", () => {
 	});
 
 	test("passes client plugin packages to a cold server and restores them for its next generation", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-auto-plugin-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-auto-plugin-"));
 		directories.add(directory);
 		const serverId = "00000000-0000-4000-8000-000000000001";
 		const packagePath = fileURLToPath(new URL("../examples/plugins/pi-example-plugin", import.meta.url));
@@ -232,7 +232,7 @@ describe("experimental durable server composition", () => {
 	});
 
 	test("retires a cold server after its only Session attachment disconnects", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-auto-session-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-auto-session-"));
 		directories.add(directory);
 		const serverId = "00000000-0000-4000-8000-000000000001";
 		vi.stubEnv("PI_SERVER_DIR", directory);
@@ -248,7 +248,7 @@ describe("experimental durable server composition", () => {
 	});
 
 	test("runs and discovers multiple logical servers from one directory", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-multi-server-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-multi-server-"));
 		directories.add(directory);
 		const firstId = "00000000-0000-4000-8000-000000000001";
 		const secondId = "00000000-0000-4000-8000-000000000002";
@@ -722,7 +722,7 @@ describe("experimental durable server composition", () => {
 	});
 
 	test("retires an unclaimed idle worker after replacement demand expires", async () => {
-		const directory = await mkdtemp(join("/tmp", $13pi-orphan-worker-"));
+		const directory = await mkdtemp(join("/tmp", "3pi-orphan-worker-"));
 		directories.add(directory);
 		vi.stubEnv("__PI_SESSION_WORKER_ORPHAN_DEMAND_GRACE_MS", "50");
 		const first = await startServer({ ...sessionWorkerModel, directory });

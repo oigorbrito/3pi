@@ -138,7 +138,7 @@ async function runScenario(
 ): Promise<ScenarioResult> {
 	const scenarioDir = join(workDir, mode, scenario.replace(/[^A-Za-z0-9_.-]+/g, "-"));
 	mkdirSync(scenarioDir, { recursive: true });
-	const reportPath = join(scenarioDir, $13pi-client.json");
+	const reportPath = join(scenarioDir, "3pi-client.json");
 	const result: ScenarioResult = { mode, scenario, checks: new Map(), messages: new Map() };
 	const run = await runCommand(
 		"npx",
@@ -182,7 +182,7 @@ async function runScenario(
 	// baselined like any other check.
 	let client: { success?: unknown; error?: unknown } = { error: "client.ts wrote no report" };
 	if (existsSync(reportPath)) client = JSON.parse(readFileSync(reportPath, "utf8")) as typeof client;
-	record(result, $13pi-client", client.success === true ? "pass" : "fail", String(client.error ?? ""));
+	record(result, "3pi-client", client.success === true ? "pass" : "fail", String(client.error ?? ""));
 	return result;
 }
 
@@ -300,10 +300,10 @@ Options:
 		return 1;
 	}
 
-	const workDir = mkdtempSync(join(tmpdir(), $13pi-mcp-conformance-"));
+	const workDir = mkdtempSync(join(tmpdir(), "3pi-mcp-conformance-"));
 	try {
 		// The upstream runner splits --command on spaces, so use a launcher path without any.
-		const launcher = join(workDir, $13pi-client");
+		const launcher = join(workDir, "3pi-client");
 		writeFileSync(
 			launcher,
 			`#!/bin/sh\nexec ${JSON.stringify(process.execPath)} --import ${JSON.stringify(resolverUrl)} ${JSON.stringify(clientPath)} "$@"\n`,

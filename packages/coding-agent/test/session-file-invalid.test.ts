@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-	const dir = realpathSync(mkdtempSync(join(tmpdir(), $13pi-session-file-invalid-")));
+	const dir = realpathSync(mkdtempSync(join(tmpdir(), "3pi-session-file-invalid-")));
 	tempDirs.push(dir);
 	return dir;
 }

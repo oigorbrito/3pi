@@ -109,11 +109,11 @@ export function parseModelCatalogRequest(url: string | URL, userAgent: string | 
 		return { kind: "invalid", error: "Invalid model types." };
 	}
 
-	const piVersion = requestUrl.searchParams.get($13pi-version");
+	const piVersion = requestUrl.searchParams.get("3pi-version");
 	if (piVersion === null) {
 		const userAgentVersion = PI_USER_AGENT_RE.exec(userAgent ?? "")?.[1];
 		if (userAgentVersion !== undefined && isValidModelCatalogPiVersion(userAgentVersion)) {
-			requestUrl.searchParams.set($13pi-version", userAgentVersion);
+			requestUrl.searchParams.set("3pi-version", userAgentVersion);
 			return { kind: "redirect", location: requestUrl.toString() };
 		}
 		return { kind: "catalog", piVersion: undefined, representation };

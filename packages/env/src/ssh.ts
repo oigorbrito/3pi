@@ -180,7 +180,7 @@ function runSsh(
  * Showing a fingerprint is not authentication: compare it with one obtained out of band before accepting it.
  */
 export async function scanHostKey(target: SshTarget): Promise<{ lines: string[]; fingerprints: string[] }> {
-	const directory = await mkdtemp(join(tmpdir(), $13pi-env-hostkey-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-env-hostkey-"));
 	try {
 		const scanned = join(directory, "known_hosts");
 		// Authentication may fail without the key; the key is recorded before authentication.
@@ -293,7 +293,7 @@ function powershell(script: string): string {
 }
 
 const WINDOWS_PROBE = powershell(
-	"$13pi-ENV-PROBE'; 'Windows'; [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString(); '-'; $HOME; '-'; '-'",
+	""3pi-ENV-PROBE'; 'Windows'; [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString(); '-'; $HOME; '-'; '-'",
 );
 
 function normalizeArch(machine: string): RemotePlatform["arch"] {
@@ -308,7 +308,7 @@ type Probe = { system: string; machine: string; os: string; home: string; tmpdir
 function parseProbe(target: SshTarget, output: string): Probe {
 	// Login shells may print a banner first.
 	const lines = output.split(/\r?\n/);
-	const start = lines.indexOf($13pi-ENV-PROBE");
+	const start = lines.indexOf("3pi-ENV-PROBE");
 	if (start === -1) throw new Error(`Unexpected answer from ${target.host}: ${output.trim()}`);
 	const [system = "", machine = "", os = "", home = "", tmpdir = "-", preload = "-"] = lines.slice(start + 1);
 	return { system, machine, os, home, tmpdir, preload };
@@ -355,7 +355,7 @@ export async function detectPlatform(target: SshTarget): Promise<RemotePlatform>
 /** The daemon binary this package ships for a remote system. */
 export function packagedDaemon(remote: Pick<RemotePlatform, "platform" | "arch">): string {
 	const name = `pi-env-${remote.platform}-${remote.arch}`;
-	return join(packageRoot, "bin", name, remote.platform === "windows" ? $13pi-env.exe" : $13pi-env");
+	return join(packageRoot, "bin", name, remote.platform === "windows" ? "3pi-env.exe" : "3pi-env");
 }
 
 function quotePosix(text: string): string {
@@ -416,14 +416,14 @@ export async function deployDaemon(
 				// PowerShell reads redirected stdin itself, as text lines for `$input`, so the binary comes as base64 lines
 				// up to an end marker: Windows' sshd may never pass on the end of stdin.
 				"$text = New-Object System.Text.StringBuilder",
-				"foreach ($line in $input) { if ($line -eq $13pi-ENV-END') { break }; [void]$text.Append($line) }",
+				"foreach ($line in $input) { if ($line -eq "3pi-ENV-END') { break }; [void]$text.Append($line) }",
 				"$bytes = [Convert]::FromBase64String($text.ToString())",
 				"$out = [IO.File]::Open($t, 'CreateNew', 'Write', 'None'); $out.Write($bytes, 0, $bytes.Length); $out.Close()",
-				`if ((Get-FileHash -Algorithm SHA256 -LiteralPath $t).Hash.ToLower() -ne '${sha256}') { Remove-Item -LiteralPath $t; throw $13pi-env upload is corrupt' }`,
+				`if ((Get-FileHash -Algorithm SHA256 -LiteralPath $t).Hash.ToLower() -ne '${sha256}') { Remove-Item -LiteralPath $t; throw "3pi-env upload is corrupt' }`,
 				// A running daemon or a virus scanner can hold the old file for a moment.
 				"for ($i = 0; ; $i++) { try { Move-Item -Force -LiteralPath $t -Destination $f; break } catch { if ($i -ge 20) { throw }; Start-Sleep -Milliseconds 250 } }",
 				// Older daemons; one that is running stays until it exits.
-				"Get-ChildItem -LiteralPath $d -Filter $13pi-env-*.exe' | Where-Object { $_.FullName -ne $f } | ForEach-Object { Remove-Item -LiteralPath $_.FullName -ErrorAction SilentlyContinue }",
+				"Get-ChildItem -LiteralPath $d -Filter "3pi-env-*.exe' | Where-Object { $_.FullName -ne $f } | ForEach-Object { Remove-Item -LiteralPath $_.FullName -ErrorAction SilentlyContinue }",
 				"'deployed'",
 			].join("; "),
 		);
@@ -440,7 +440,7 @@ export async function deployDaemon(
 		'chmod 700 "$d"',
 		't=$(mktemp "$d/.pi-env.XXXXXX")',
 		'cat > "$t"',
-		`if [ "$(hash "$t")" != ${sha256} ]; then rm -f "$t"; echo $13pi-env upload is corrupt" >&2; exit 1; fi`,
+		`if [ "$(hash "$t")" != ${sha256} ]; then rm -f "$t"; echo "3pi-env upload is corrupt" >&2; exit 1; fi`,
 		'chmod 700 "$t"',
 		'mv -f "$t" "$f"',
 		// Older daemons; running ones keep their file open until they exit.

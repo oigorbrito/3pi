@@ -36,7 +36,7 @@ afterEach(async () => {
 });
 
 async function createSqliteStorage(options: { readonly walAutoCheckpointPages?: number } = {}) {
-	const directory = await mkdtemp(join(tmpdir(), $13pi-durable-sqlite-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-durable-sqlite-"));
 	tempDirectories.add(directory);
 	const path = join(directory, "storage.sqlite");
 	const storage = await openNodeSqliteStorage(path, options);
@@ -115,7 +115,7 @@ registerStorageConformance({ describe, expect, it }, "SqliteStorage", async (use
 );
 
 registerStorageConformance({ describe, expect, it }, "SqliteStorage across reopen", async (use) => {
-	const directory = await mkdtemp(join(tmpdir(), $13pi-durable-sqlite-conformance-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-durable-sqlite-conformance-"));
 	const path = join(directory, "storage.sqlite");
 	const created = await openNodeSqliteStorage(path);
 	await created.close(context);

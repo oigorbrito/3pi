@@ -17,9 +17,9 @@ registerEnvConformance(
 	{ describe, expect, it },
 	"RemoteExecutionEnv over a pipe",
 	async (use) => {
-		const cwd = mkdtempSync(join(tmpdir(), $13pi-env-conformance-"));
+		const cwd = mkdtempSync(join(tmpdir(), "3pi-env-conformance-"));
 		try {
-			await use(new RemoteExecutionEnv({ connection, id: $13pi-env:test", cwd, watch: { pollIntervalMs: 100 } }));
+			await use(new RemoteExecutionEnv({ connection, id: "3pi-env:test", cwd, watch: { pollIntervalMs: 100 } }));
 		} finally {
 			// On Windows a killed command's processes can hold the directory for a moment.
 			rmSync(cwd, { recursive: true, force: true, maxRetries: 50, retryDelay: 100 });

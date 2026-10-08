@@ -437,7 +437,7 @@ describe("SessionManager session file creation", () => {
 	let tempDir: string;
 
 	beforeEach(() => {
-		tempDir = mkdtempSync(join(tmpdir(), $13pi-session-persist-"));
+		tempDir = mkdtempSync(join(tmpdir(), "3pi-session-persist-"));
 	});
 
 	afterEach(() => {

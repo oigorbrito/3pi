@@ -283,7 +283,7 @@ async function main() {
 		publishedAt: new Date().toISOString(),
 		packages: publishedPackages,
 	};
-	const temporaryDirectory = mkdtempSync(join(tmpdir(), $13pi-release-announcement-"));
+	const temporaryDirectory = mkdtempSync(join(tmpdir(), "3pi-release-announcement-"));
 	try {
 		const releasePath = join(temporaryDirectory, "release.json");
 		const latestPath = join(temporaryDirectory, "latest.json");

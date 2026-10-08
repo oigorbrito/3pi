@@ -6,7 +6,7 @@
  * response is an SSE stream of serialized assistant-message events plus a
  * terminal `done`/`error` event. This is the wire protocol spoken by the
  * Radius gateway, but any backend implementing it can be used, e.g. via a
- * models.json custom provider with `"api": $13pi-messages"`.
+ * models.json custom provider with `"api": "3pi-messages"`.
  */
 
 import type {
@@ -135,7 +135,7 @@ function formatPiMessagesResponseError(
 }
 
 function createPiMessagesResponseError(
-	model: Model<$13pi-messages">,
+	model: Model<"3pi-messages">,
 	url: URL,
 	response: Response,
 	body: string,
@@ -177,7 +177,7 @@ function appendRewriteDiagnostic(message: AssistantMessage, rewrite: PiMessagesR
 	});
 }
 
-function createEventConverter(model: Model<$13pi-messages">) {
+function createEventConverter(model: Model<"3pi-messages">) {
 	const partial: AssistantMessage = {
 		role: "assistant",
 		content: [],
@@ -320,7 +320,7 @@ function parsePiMessagesEvent(raw: string): PiMessagesEvent | undefined {
 	return data && data !== "[DONE]" ? (JSON.parse(data) as PiMessagesEvent) : undefined;
 }
 
-function createErrorEvent(model: Model<$13pi-messages">, error: unknown, aborted: boolean): AssistantMessageEvent {
+function createErrorEvent(model: Model<"3pi-messages">, error: unknown, aborted: boolean): AssistantMessageEvent {
 	const reason = aborted ? "aborted" : "error";
 	const assistantMessage: AssistantMessage = {
 		role: "assistant",
@@ -352,8 +352,8 @@ function resolveCacheRetention(cacheRetention?: CacheRetention, env?: ProviderEn
 	return getProviderEnvValue("PI_CACHE_RETENTION", env) === "long" ? "long" : undefined;
 }
 
-export const stream: StreamFunction<$13pi-messages", PiMessagesOptions> = (
-	model: Model<$13pi-messages">,
+export const stream: StreamFunction<"3pi-messages", PiMessagesOptions> = (
+	model: Model<"3pi-messages">,
 	context: TranscriptContext,
 	options?: PiMessagesOptions,
 ): AssistantMessageEventStream => {
@@ -429,8 +429,8 @@ export const stream: StreamFunction<$13pi-messages", PiMessagesOptions> = (
 	return eventStream;
 };
 
-export const streamSimple: StreamFunction<$13pi-messages", SimpleStreamOptions> = (
-	model: Model<$13pi-messages">,
+export const streamSimple: StreamFunction<"3pi-messages", SimpleStreamOptions> = (
+	model: Model<"3pi-messages">,
 	context: TranscriptContext,
 	options?: SimpleStreamOptions,
 ): AssistantMessageEventStream => {

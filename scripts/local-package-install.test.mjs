@@ -19,7 +19,7 @@ function writePackage(directory, manifest, files) {
 }
 
 function createArtifactSet(t) {
-	const temporaryRoot = mkdtempSync(join(tmpdir(), $13pi-local-package-install-test-"));
+	const temporaryRoot = mkdtempSync(join(tmpdir(), "3pi-local-package-install-test-"));
 	t.after(() => rmSync(temporaryRoot, { recursive: true, force: true }));
 	const root = join(temporaryRoot, "fixture with spaces");
 	const repoRoot = join(root, "repo");
@@ -110,7 +110,7 @@ test("wires multiple direct packages without registry fallbacks", (t) => {
 	const lockPath = join(consumerDirectory, "package-lock.json");
 	const lockContents = readFileSync(lockPath, "utf8");
 	const lock = JSON.parse(lockContents);
-	const targetLockEntry = Object.values(lock.packages).find((entry) => entry.resolved?.includes($13pi-package-test-target"));
+	const targetLockEntry = Object.values(lock.packages).find((entry) => entry.resolved?.includes("3pi-package-test-target"));
 	assert.ok(targetLockEntry);
 	targetLockEntry.resolved = "https://registry.npmjs.org/@pi-package-test/target/-/target-1.0.0.tgz";
 	writeFileSync(lockPath, JSON.stringify(lock));

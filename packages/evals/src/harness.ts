@@ -280,7 +280,7 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 	const selection = resolveModelSelection(options.model);
 	const hostAgentDir = getAgentDir();
 	const sandboxIdentity = resolveSandboxIdentity();
-	const root = await mkdtemp(join(tmpdir(), $13pi-eval-"));
+	const root = await mkdtemp(join(tmpdir(), "3pi-eval-"));
 	const workspace = join(root, "workspace");
 	const isolatedHome = join(root, "home");
 	const agentDir = join(isolatedHome, ".3pi", "agent");
@@ -476,7 +476,7 @@ export function createPiCodingAgentHarness<TOutput extends JsonValue>(
 	options: PiCodingAgentHarnessOptions | PiCodingAgentHarnessWithOutput<TOutput> = {},
 ): Harness<PiCodingAgentInput, string | TOutput> {
 	return createHarness<PiCodingAgentInput, string | TOutput>({
-		name: options.name ?? $13pi-coding-agent",
+		name: options.name ?? "3pi-coding-agent",
 		run: ({ input, signal, setArtifact }) => runPiCodingAgent(input, signal, setArtifact, options),
 	});
 }

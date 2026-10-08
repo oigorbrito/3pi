@@ -24,7 +24,7 @@ describe("MCP OAuth refresh", () => {
 	async function signedIn() {
 		const server = await startOAuthMcpServer();
 		cleanups.push(server.close);
-		const lockDir = mkdtempSync(join(tmpdir(), $13pi-mcp-refresh-"));
+		const lockDir = mkdtempSync(join(tmpdir(), "3pi-mcp-refresh-"));
 		cleanups.push(() => rmSync(lockDir, { recursive: true, force: true }));
 		// Stores sharing the credential file and lock directory stand in for separate pi processes.
 		const backend = new InMemoryAuthStorageBackend();

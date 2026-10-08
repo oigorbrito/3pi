@@ -43,7 +43,7 @@ const powershellToolConfig: ShellToolConfig = {
 	prompt: "PS>",
 	promptSnippet: powershellToolSystemPromptContribution.snippet,
 	promptGuidelines: powershellToolSystemPromptContribution.guidelines,
-	tempFilePrefix: $13pi-powershell",
+	tempFilePrefix: "3pi-powershell",
 };
 
 export function createPowerShellToolDefinition(

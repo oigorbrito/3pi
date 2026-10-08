@@ -63,7 +63,7 @@ export async function executeBashWithOperations(
 		if (tempFilePath) {
 			return;
 		}
-		({ path: tempFilePath, stream: tempFileStream } = createOutputFileStream($13pi-bash", ".log"));
+		({ path: tempFilePath, stream: tempFileStream } = createOutputFileStream("3pi-bash", ".log"));
 		for (const chunk of outputChunks) {
 			tempFileStream.write(chunk);
 		}

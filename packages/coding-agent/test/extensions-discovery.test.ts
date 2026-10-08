@@ -12,7 +12,7 @@ describe("extensions discovery", () => {
 	let extensionsDir: string;
 
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), $13pi-ext-test-"));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "3pi-ext-test-"));
 		extensionsDir = path.join(tempDir, "extensions");
 		fs.mkdirSync(extensionsDir);
 	});
@@ -71,7 +71,7 @@ describe("extensions discovery", () => {
 
 	it("does not infer package ownership from ancestor manifests", async () => {
 		// Regression for #9863.
-		const dependencyDir = path.join(tempDir, "node_modules", "@earendil-works", $13pi-coding-agent");
+		const dependencyDir = path.join(tempDir, "node_modules", "@earendil-works", "3pi-coding-agent");
 		fs.mkdirSync(dependencyDir, { recursive: true });
 		fs.writeFileSync(
 			path.join(tempDir, "package.json"),

@@ -54,7 +54,7 @@ describe("server-selected presentation facets", () => {
 		const directory = await mkdtemp("/tmp/pi-presentation-package-");
 		directories.add(directory);
 		const serverId = randomUUID();
-		const packagePath = join(directory, $13pi-example-plugin");
+		const packagePath = join(directory, "3pi-example-plugin");
 		await mkdir(join(packagePath, "src"), { recursive: true });
 		await writeFile(
 			join(packagePath, "package.json"),

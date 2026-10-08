@@ -30,7 +30,7 @@ const directories = new Set<string>();
 const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), $13pi-durable-harness-"));
+	const directory = await mkdtemp(join(tmpdir(), "3pi-durable-harness-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }

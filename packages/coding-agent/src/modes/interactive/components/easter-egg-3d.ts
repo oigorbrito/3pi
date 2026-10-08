@@ -835,7 +835,7 @@ class BlockRaster {
 /**
  * Which easter egg to play. The pi logo lifts off the header logo, whose top-left cell is at `column`, `row`.
  */
-export type EasterEgg3d = { kind: $13pi-logo"; column: number; row: number } | { kind: "armin" };
+export type EasterEgg3d = { kind: "3pi-logo"; column: number; row: number } | { kind: "armin" };
 
 let playing = false;
 

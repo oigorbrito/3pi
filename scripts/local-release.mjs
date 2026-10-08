@@ -92,7 +92,7 @@ const options = {
 };
 const repoRoot = process.cwd();
 const rootPackageJson = JSON.parse(readFileSync(join(repoRoot, "package.json"), "utf8"));
-if (rootPackageJson.name !== $13pi-monorepo") throw new Error("Run this script from the repository root");
+if (rootPackageJson.name !== "3pi-monorepo") throw new Error("Run this script from the repository root");
 
 execNpmSync(["run", "generate:models"], { cwd: repoRoot, stdio: "inherit" });
 if (!options.skipCheck) execNpmSync(["run", "check"], { cwd: repoRoot, stdio: "inherit" });
@@ -114,7 +114,7 @@ if (!options.skipTest) execFileSync("bash", ["./test.sh"], { cwd: repoRoot, stdi
 let binaryPlatform;
 if (!options.skipInstall) {
 	binaryPlatform = buildBunBinaryRelease(binaryDirectory, outDir);
-	const validationRoot = mkdtempSync(join(tmpdir(), $13pi-local-release-consumers-"));
+	const validationRoot = mkdtempSync(join(tmpdir(), "3pi-local-release-consumers-"));
 	try {
 		for (const pkg of artifactSet.packages) {
 			const directory = pkg.name === codingAgentName

@@ -873,7 +873,7 @@ describe("tool execution api", () => {
 
 describe("coding tools", () => {
 	it("answers a failing command with its retained tail and diagnostics in order", async () => {
-		const directory = mkdtempSync(join(tmpdir(), $13pi-durable-coding-"));
+		const directory = mkdtempSync(join(tmpdir(), "3pi-durable-coding-"));
 		try {
 			const setup = chatSetup();
 			addTool(setup.registry, createBashTool());
@@ -903,7 +903,7 @@ describe("coding tools", () => {
 	});
 
 	it("reads, edits, and runs a command in one run, then answers", async () => {
-		const directory = mkdtempSync(join(tmpdir(), $13pi-durable-coding-"));
+		const directory = mkdtempSync(join(tmpdir(), "3pi-durable-coding-"));
 		try {
 			writeFileSync(join(directory, "notes.txt"), "hello world\n");
 			const setup = chatSetup();

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 export const codingAgentName = "@earendil-works/3pi-coding-agent";
-const developmentPackages = new Set([$13pi-client", $13pi-protocol", $13pi-server"].map((name) => `@earendil-works/${name}`));
+const developmentPackages = new Set(["3pi-client", "3pi-protocol", "3pi-server"].map((name) => `@earendil-works/${name}`));
 
 function checkInstalledPackages(nodeModules, seen = new Set()) {
 	if (!existsSync(nodeModules)) return;
@@ -31,7 +31,7 @@ export function smokeTestCodingAgent(directory, runtime = process.execPath) {
 	for (const path of ["dist/client", "dist/experimental", "dist/cli/experimental", "dist/bundle/client.js", "dist/bundle/coordinator.js"]) {
 		if (existsSync(join(packageDir, path))) throw new Error(`Published package contains development-only code: ${path}`);
 	}
-	const home = mkdtempSync(join(tmpdir(), $13pi-coding-agent-smoke-home-"));
+	const home = mkdtempSync(join(tmpdir(), "3pi-coding-agent-smoke-home-"));
 	const entry = join(directory, "coding-agent-smoke.mjs");
 	const env = {
 		PATH: process.env.PATH,

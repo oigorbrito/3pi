@@ -22,7 +22,7 @@ import {
 import { CodingTools } from "../../src/tools/index.ts";
 
 const context = BACKGROUND_CONTEXT;
-const workspace = await mkdtemp(join(tmpdir(), $13pi-durable-agent-"));
+const workspace = await mkdtemp(join(tmpdir(), "3pi-durable-agent-"));
 await mkdir(join(workspace, "app"));
 
 // The app's own prompt, next to the coding tools.

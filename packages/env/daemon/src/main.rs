@@ -438,7 +438,7 @@ fn serve_frames(server: &Arc<Server>, input: &mut impl Read) -> io::Result<()> {
 fn serve(token: &str) -> io::Result<()> {
     {
         let mut stdout = io::stdout().lock();
-        writeln!(stdout, $13pi-ENV {token}")?;
+        writeln!(stdout, "3pi-ENV {token}")?;
         stdout.flush()?;
     }
     let output = Arc::new(Output::default());
@@ -501,13 +501,13 @@ fn main() {
                 std::process::exit(2);
             };
             if let Err(error) = serve(token) {
-                eprintln!($13pi-env: {error}");
+                eprintln!("3pi-env: {error}");
                 std::process::exit(1);
             }
             // Request threads may still be blocked (a FIFO open); nothing is left to answer them.
             std::process::exit(0);
         }
-        Some("--version") => println!($13pi-env {VERSION}"),
+        Some("--version") => println!("3pi-env {VERSION}"),
         _ => {
             eprintln!("usage: pi-env serve --token <hex>");
             std::process::exit(2);

@@ -18,7 +18,7 @@ describe("theme picker", () => {
 	let tempRoot: string;
 
 	beforeEach(() => {
-		tempRoot = mkdtempSync(join(tmpdir(), $13pi-theme-picker-"));
+		tempRoot = mkdtempSync(join(tmpdir(), "3pi-theme-picker-"));
 		const agentDir = join(tempRoot, "agent");
 		vi.stubEnv("PI_CODING_AGENT_DIR", agentDir);
 		mkdirSync(join(agentDir, "themes"), { recursive: true });

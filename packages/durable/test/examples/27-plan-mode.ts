@@ -63,7 +63,7 @@ const leavePlanMode = { extensions: null, tools: null };
 
 // ─── Host setup ─────────────────────────────────────────────────────────────
 
-const directory = await mkdtemp(join(tmpdir(), $13pi-durable-plan-"));
+const directory = await mkdtemp(join(tmpdir(), "3pi-durable-plan-"));
 await writeFile(join(directory, "server.ts"), "app.listen(3000);\n");
 
 const faux = fauxProvider();

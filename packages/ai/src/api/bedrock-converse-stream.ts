@@ -490,7 +490,7 @@ function addCustomHeadersMiddleware(client: BedrockRuntimeClient, headers: Recor
 		}
 		return next(args);
 	};
-	client.middlewareStack.add(middleware, { step: "build", name: $13pi-ai-custom-headers", priority: "low" });
+	client.middlewareStack.add(middleware, { step: "build", name: "3pi-ai-custom-headers", priority: "low" });
 }
 
 function isSmithyHttpResponse(response: unknown): response is HttpResponse {
@@ -525,7 +525,7 @@ function addResponseHeadersMiddleware(
 		}
 		return result;
 	};
-	client.middlewareStack.add(middleware, { step: "deserialize", name: $13pi-ai-response-headers" });
+	client.middlewareStack.add(middleware, { step: "deserialize", name: "3pi-ai-response-headers" });
 }
 
 export const streamSimple: StreamFunction<"bedrock-converse-stream", SimpleStreamOptions> = (

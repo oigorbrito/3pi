@@ -4,8 +4,8 @@ import type { Server } from "@earendil-works/3pi-server";
 import { WebSocket } from "undici";
 import type { RadiusRelayAuthResolver } from "./radius-auth.ts";
 
-export const RADIUS_RELAY_HOST_SUBPROTOCOL = $13pi-session-relay.host.v1";
-export const RADIUS_RELAY_CLIENT_SUBPROTOCOL = $13pi-session-relay.client.v1";
+export const RADIUS_RELAY_HOST_SUBPROTOCOL = "3pi-session-relay.host.v1";
+export const RADIUS_RELAY_CLIENT_SUBPROTOCOL = "3pi-session-relay.client.v1";
 
 const RELAY_DATA_HEADER_BYTES = 18;
 const RELAY_DATA_FRAME_VERSION = 1;

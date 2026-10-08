@@ -14,7 +14,7 @@ describe("pi mcp", () => {
 	});
 
 	async function run(args: string[], servers: Record<string, unknown> | undefined, dir?: string) {
-		const agentDir = dir ?? mkdtempSync(join(tmpdir(), $13pi-mcp-command-"));
+		const agentDir = dir ?? mkdtempSync(join(tmpdir(), "3pi-mcp-command-"));
 		if (!dir) dirs.push(agentDir);
 		if (servers) writeFileSync(join(agentDir, "mcp.json"), JSON.stringify({ mcpServers: servers }));
 		const output: string[] = [];
@@ -31,7 +31,7 @@ describe("pi mcp", () => {
 
 	const servers = {
 		fixture: { command: process.execPath, args: [FIXTURE] },
-		broken: { command: $13pi-test-missing-mcp-server" },
+		broken: { command: "3pi-test-missing-mcp-server" },
 		parked: { command: process.execPath, args: [FIXTURE], enabled: false },
 		bad: { args: ["no command"] },
 	};

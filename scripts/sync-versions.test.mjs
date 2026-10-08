@@ -26,7 +26,7 @@ function runSyncVersions(root) {
 }
 
 test("synchronizes private dependencies without touching registry aliases, generated manifests, or published lockstep", async () => {
-	const root = await mkdtemp(join(tmpdir(), $13pi-sync-versions-"));
+	const root = await mkdtemp(join(tmpdir(), "3pi-sync-versions-"));
 	try {
 		await writeManifest(root, "packages/ai", {
 			name: "@earendil-works/3pi-ai",
