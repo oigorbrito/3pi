@@ -46,7 +46,12 @@ def load_state(path: Path = STATE_FILE) -> dict:
         "enforce_local_gaps": bool,
     }
     for key, typ in required.items():
-        if key not in data or not isinstance(data[key], typ):
+        if key not in data:
+            raise ValueError(f"invalid project state: {key!r} missing")
+        val = data[key]
+        if typ is int and isinstance(val, bool):
+            raise ValueError(f"invalid project state: {key!r} cannot be a boolean")
+        if not isinstance(val, typ):
             raise ValueError(f"invalid project state: {key!r} missing or wrong type")
     if data["osps_target_level"] not in (1, 2, 3):
         raise ValueError("osps_target_level must be 1, 2, or 3")
@@ -92,7 +97,7 @@ def source_files_present(root: Path = ROOT) -> bool:
 
 
 def recognized_license(root: Path = ROOT) -> bool:
-    return any((root / name).exists() for name in ("LICENSE", "COPYING", "LICENSES"))
+    return any((root / name).exists() for name in ("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING", "LICENSES"))
 
 
 def findings(state: dict, root: Path = ROOT) -> list[Finding]:

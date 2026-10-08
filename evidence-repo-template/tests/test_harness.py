@@ -43,5 +43,25 @@ class HarnessTests(unittest.TestCase):
         fs = h.findings(s, ROOT)
         self.assertTrue(any(x.control == "OSPS-AC-03.01" and x.status == h.UNKNOWN for x in fs))
 
+    def test_load_state_rejects_boolean_for_integer_fields(self):
+        s = self.base_state()
+        s["osps_target_level"] = True
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+            tmp.write(json.dumps(s))
+            tmp_path = Path(tmp.name)
+        try:
+            with self.assertRaises(ValueError) as ctx:
+                h.load_state(tmp_path)
+            self.assertIn("cannot be a boolean", str(ctx.exception))
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    def test_recognized_license_supports_md_and_txt(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmppath = Path(tmpdir)
+            self.assertFalse(h.recognized_license(tmppath))
+            (tmppath / "LICENSE.md").write_text("license content", encoding="utf-8")
+            self.assertTrue(h.recognized_license(tmppath))
+
 if __name__ == "__main__":
     unittest.main()
