@@ -1,4 +1,4 @@
-# 3pi Agent Instructions
+# Agent Instructions
 
 These instructions are a repository adapter built on top of externally defined controls. They are **not themselves an OpenSSF, NIST or DORA requirement**.
 

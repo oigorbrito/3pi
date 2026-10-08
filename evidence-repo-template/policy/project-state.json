@@ -12,6 +12,6 @@
     "evidence": null
   },
   "production_deployed": false,
-  "notes": "Record observable facts for 3pi. Product stage does not determine OSPS maturity.",
+  "notes": "Record observable facts only. Product stage does not determine OSPS maturity.",
   "enforce_local_gaps": false
 }

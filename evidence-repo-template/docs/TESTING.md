@@ -9,7 +9,7 @@ python -m unittest discover -s tests -v
 
 ## Current test scope
 
-3pi tests only the harness itself at bootstrap. Project-specific tests must be added as implementation appears.
+The template tests only the harness itself. Project-specific tests must be added as implementation appears.
 
 ## Maturity trigger
 

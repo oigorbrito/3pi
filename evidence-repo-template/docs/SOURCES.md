@@ -1,4 +1,4 @@
-# External basis for 3pi
+# External basis
 
 This template intentionally separates **source requirements** from **repository adapters**.
 

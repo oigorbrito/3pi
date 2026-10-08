@@ -1,4 +1,4 @@
-# 3pi Security Policy
+# Security Policy
 
 ## Reporting a vulnerability
 

@@ -1,4 +1,4 @@
-# 3pi Release readiness
+# Release readiness
 
 **STATUS: NOT_APPLICABLE_UNTIL_FIRST_RELEASE**
 

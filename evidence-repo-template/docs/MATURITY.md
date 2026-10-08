@@ -1,8 +1,8 @@
-# 3pi Maturity and applicability model
+# Maturity and applicability model
 
 ## Normative basis
 
-The 3pi repository uses **OpenSSF OSPS Baseline v2026.08.28** as its normative maturity reference.
+The repository uses **OpenSSF OSPS Baseline v2026.08.28** as the normative maturity reference for this starter harness.
 
 OSPS defines:
 

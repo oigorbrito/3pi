@@ -2,9 +2,9 @@
 
 [English](README.md) | [Português (Brasil)](README.pt-BR.md)
 
-Este repositório é a estrutura inicial de testes e verificações (starter harness) do **3pi**, e não uma declaração de maturidade ou conformidade.
+Este repositório é um **starter harness** (estrutura inicial de testes e verificações), e não uma declaração de maturidade ou conformidade.
 
-Seu objetivo é fazer com que o 3pi inicie com:
+Seu objetivo é fazer com que um novo repositório inicie com:
 
 - instruções de projeto versionadas e evidências de engenharia;
 - um comando mínimo executável de verificação;
@@ -33,13 +33,13 @@ python -m unittest discover -s tests -v
 
 **STATUS: UNDEFINED**
 
-Descreva o projeto 3pi aqui antes que a implementação seja considerada estabelecida.
+Descreva o projeto aqui antes que a implementação seja considerada estabelecida.
 
 ## Uso básico
 
 **STATUS: NOT_RELEASED**
 
-Antes do primeiro lançamento oficial, substitua esta seção por instruções de instalação, configuração e uso básico do 3pi.
+Antes do primeiro lançamento oficial, substitua esta seção por instruções de instalação, configuração e uso básico.
 
 ## Relato de defeitos
 

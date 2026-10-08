@@ -1,4 +1,4 @@
-# Contributing to 3pi
+# Contributing
 
 ## Contribution process
 

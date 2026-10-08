@@ -1,4 +1,4 @@
-# 3pi Architecture
+# Architecture
 
 **STATUS: PROVISIONAL**
 

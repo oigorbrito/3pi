@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "3pi project state",
+  "title": "Evidence-driven repository project state",
   "type": "object",
   "required": [
     "schema_version",
