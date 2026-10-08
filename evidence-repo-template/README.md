@@ -1,5 +1,7 @@
 # Evidence-Driven Repository Template
 
+[English](README.md) | [Português (Brasil)](README.pt-BR.md)
+
 This repository is a **starter harness**, not a claim of maturity or compliance.
 
 Its purpose is to make a new repository start with:
