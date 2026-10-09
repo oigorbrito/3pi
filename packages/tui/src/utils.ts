@@ -223,7 +223,9 @@ function graphemeWidth(segment: string): number {
 	// Thai/Lao AM vowels.
 	let followsMark = false;
 	const chars = [...base];
-	for (const char of chars.slice(1)) {
+	// Use index-based loop starting from index 1 to avoid array slicing overhead on multi-character grapheme clusters
+	for (let i = 1; i < chars.length; i++) {
+		const char = chars[i];
 		if (terminalSpacingMarkRegex.test(char)) {
 			width += 1;
 			followsMark = false;
