@@ -144,6 +144,40 @@ Para cada tarefa e configuração, registrar:
 
 Comparar baseline e candidato nas mesmas tarefas e condições. Relatar mediana e dispersão; não esconder falhas em uma média agregada. Se a amostra for pequena, declarar isso. Não adotar mudanças com base em uma única execução.
 
+## Portões de decisão experimental (reconciliação do plano)
+
+Esta seção torna obrigatórias as salvaguardas metodológicas descritas no roadmap. Ela não afirma que os experimentos já foram executados.
+
+### Antes de cada experimento
+
+Registrar em issue ou documento versionado, antes de observar os resultados:
+
+- Hipótese e mecanismo esperado; qual variável será alterada e quais permanecerão fixas.
+- Tarefas, versões, modelo/provedor, parâmetros, ambiente, limites de custo/tempo/tentativas e critérios de sucesso.
+- Métrica primária e métricas de proteção (guardrails), incluindo taxa de conclusão e regressões relevantes.
+- Regra de decisão: ganho mínimo relevante, margem máxima tolerada de regressão e método de agregação.
+- Número de execuções e limitações conhecidas. Três execuções por tarefa são apenas um ponto de partida exploratório, não prova estatística por si só.
+
+### Como declarar um resultado
+
+- **Ganho de eficiência:** reportar custo por tarefa concluída, não apenas custo por tentativa nem tokens isolados.
+- **Qualidade:** publicar taxa de sucesso e falhas por tarefa junto das métricas de custo e latência.
+- **Comparabilidade:** executar baseline e candidato nas mesmas tarefas e condições; se houver desvio, documentá-lo e não tratar a comparação como equivalente.
+- **Incerteza:** mostrar resultados individuais, mediana e dispersão. Amostras pequenas ou resultados inconsistentes devem ser classificados como inconclusivos, não como vitória.
+- **Custo:** distinguir custo faturado de estimativa e explicar componentes não medidos.
+- **Repetição:** repetir resultados inesperados e verificar se a melhoria se mantém em mais de uma tarefa representativa.
+
+### Portão para adotar, rejeitar ou investigar mais
+
+- **ADOTAR:** o ganho mínimo pré-definido foi atingido de forma reproduzível e os guardrails de qualidade, segurança e compatibilidade foram respeitados.
+- **REJEITAR:** não há ganho relevante, o resultado piora de forma consistente, ou o custo/risco de manutenção supera o benefício.
+- **INCONCLUSIVO:** dados insuficientes, ruído elevado ou conflito entre métricas; aumentar a amostra ou restringir a hipótese antes de decidir.
+- Não escolher limites depois de ver os resultados. Se não houver amostra suficiente para uma conclusão estatística, declarar explicitamente a limitação, sem alegar significância.
+
+### Ordem de prioridade
+
+Ordenar iniciativas por impacto potencial no objetivo, evidência disponível, esforço de implementação, risco de regressão e custo de manutenção. Prioridade alta não substitui a baseline nem autoriza pular testes. Preferir a menor mudança isolada que teste a hipótese; não remover shell, ampliar autonomia ou trocar o harness inteiro sem evidência específica.
+
 ## Definition of Done — quando uma feature está concluída
 
 Uma feature só pode ser marcada como **CONCLUÍDA** se:
