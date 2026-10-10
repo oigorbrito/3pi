@@ -1,0 +1,10 @@
+{
+	"name": "@earendil-works/3pi-example-plugin",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"peerDependencies": {
+		"@earendil-works/chord": "^0.84.4",
+		"@earendil-works/3pi-coding-agent": "^0.84.4"
+	}
+}
