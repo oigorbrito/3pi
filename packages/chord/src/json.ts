@@ -104,12 +104,20 @@ function check(value: unknown, ancestors: Set<object>): boolean {
 	if (typeof value !== "object" || value === null) return false;
 	const prototype = Object.getPrototypeOf(value);
 	if (prototype !== Object.prototype && prototype !== null) return false;
-	if (Reflect.ownKeys(value).some((key) => typeof key !== "string")) return false;
+	const keys = Reflect.ownKeys(value);
+	if (keys.some((key) => typeof key !== "string")) return false;
 	if (ancestors.has(value)) return false;
 	ancestors.add(value);
 	try {
-		for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(value))) {
-			if (!descriptor.enumerable || !("value" in descriptor) || !check(descriptor.value, ancestors)) {
+		// Avoid Object.values(Object.getOwnPropertyDescriptors(value)) to eliminate temporary descriptor map objects & arrays.
+		for (let index = 0; index < keys.length; index++) {
+			const descriptor = Object.getOwnPropertyDescriptor(value, keys[index]!);
+			if (
+				descriptor === undefined ||
+				!descriptor.enumerable ||
+				!("value" in descriptor) ||
+				!check(descriptor.value, ancestors)
+			) {
 				return false;
 			}
 		}

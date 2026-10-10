@@ -425,7 +425,8 @@ const diffObject = (
 ): void => {
 	const beforeKeys = Object.keys(before);
 	const afterKeys = Object.keys(after);
-	if ([...beforeKeys, ...afterKeys].some((key) => RESERVED_SEGMENTS.has(key))) {
+	// Avoid intermediate array spread [...beforeKeys, ...afterKeys] to reduce allocations during object diffing.
+	if (beforeKeys.some((key) => RESERVED_SEGMENTS.has(key)) || afterKeys.some((key) => RESERVED_SEGMENTS.has(key))) {
 		if (!equalJson(before, after)) emitSet(path, after, operations);
 		return;
 	}
