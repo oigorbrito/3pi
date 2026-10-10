@@ -1,0 +1,24 @@
+{
+  "name": "3pi-migration-block-1",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/ai",
+    "packages/telemetry",
+    "packages/agent"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@earendil-works/3pi-telemetry && npm run build:offline --workspace=@earendil-works/3pi-ai && npm run build --workspace=@earendil-works/3pi-agent-core",
+    "test": "npm run test --workspace=@earendil-works/3pi-telemetry && npm run test --workspace=@earendil-works/3pi-ai && npm run test --workspace=@earendil-works/3pi-agent-core"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.5",
+    "@types/node": "22.19.19",
+    "shx": "0.4.0",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
